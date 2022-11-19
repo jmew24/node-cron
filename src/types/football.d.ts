@@ -1,97 +1,85 @@
-declare interface FootballProps {
-  query: string;
-  setShow: Dispatch<SetStateAction<SearchShowSport>>;
-}
-
-declare type NFLPosition =
-  | "QB"
-  | "C"
-  | "OG"
-  | "FB"
-  | "HB"
-  | "WR"
-  | "TE"
-  | "LT"
-  | "RT"
-  | "DE"
-  | "DT"
-  | "MLB"
-  | "ROLB"
-  | "OLB"
-  | "LOLB"
-  | "CB"
-  | "FS"
-  | "SS"
-  | "K"
-  | "P"
-  | "";
-
 declare type NFLTeam = {
+  id: string;
   name: string;
   abbreviation: string;
   teamName: string;
-};
-
-declare type NFLTeamFilter = {
-  team: string;
-};
-
-declare type NFLCBSPlayer = {
-  playerId: number;
-  playerFirstName: string;
-  playerLastName: string;
-  playerLeagueAbbreviation: string;
-  playerPosition: string;
-  playerSlug: string;
-  teamAbbreviation: string;
+  shortName: string;
 };
 
 declare type NFLPlayer = {
   id: number;
-  assetname: string;
-  fullNameForSearch: string;
   firstName: string;
   lastName: string;
-  jerseyNum: number;
-  position: string;
-  portraitId: number;
   team: NFLTeam;
+  position: string;
+  number: number;
+  _type: 'player' | 'coach' | 'staff';
   url: string;
   image: string;
   source: string;
 };
 
-declare type NFLRequestPlayers = {
-  primaryKey: number;
-  plyrAssetname: string;
-  fullNameForSearch: string;
-  firstName: string;
-  lastName: string;
-  jerseyNum: number;
+declare type NFLAthleteResult = {
   position: string;
-  plyrPortrait: number;
-  team: string;
-  teamId: number;
+  item: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    links: [
+      {
+        href: string;
+      }
+    ];
+    headshot: {
+      href: string;
+    };
+    slug: string;
+    jersey: string;
+    position: {
+      id: string;
+      name: string;
+      displayName: string;
+      abbreviation: string;
+    };
+  };
 };
 
-declare type NFLCBSRequest = {
-  results: NFLCBSPlayer[];
-  hasMore: boolean;
+declare type NFLRosterResult = {
+  coach: [];
+  athletes: NFLAthleteResult[];
 };
 
-declare type NFLPlayerRequest = {
-  count: number;
-  docs: NFLRequestPlayers[];
+declare type NFLTeamResult = {
+  team: {
+    id: string;
+    slug: string;
+    abbreviation: string;
+    displayName: string;
+    shortDisplayName: string;
+    name: string;
+    nickname: string;
+    location: string;
+  };
 };
 
-declare type NFLRequest = {
-  query: string;
-  results: NFLPlayer[];
-};
-
-declare type NFLPlayerResult = NFLPlayer[];
-
-declare type NFLPlayerFilter = {
-  team: string;
-  position: string;
+declare type NFLResult = {
+  sports: [
+    {
+      id: string;
+      uid: string;
+      name: string;
+      slug: string;
+      leagues: [
+        {
+          id: string;
+          uid: string;
+          name: string;
+          abbreviation: string;
+          shortName: string;
+          slug: string;
+          teams: NFLTeamResult[];
+        }
+      ];
+    }
+  ];
 };

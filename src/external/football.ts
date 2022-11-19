@@ -1,31 +1,31 @@
 import proxy from '../lib/proxy';
 import prisma from '../lib/prisma';
 
-export default async function getBaseball() {
+export default async function getFootball() {
   const teamResponse = (await proxy(
-    `https://statsapi.mlb.com/api/v1/teams/`
-  )) as MLBResult;
+    `https://site.api.espn.com/apis/site/v2/sports/football/nfl/teams`
+  )) as NFLResult;
 
-  for (const item of teamResponse.teams) {
+  const league = teamResponse.sports[0].leagues[0];
+  for (const t of league.teams) {
+    const item = t.team;
     const team = {
       id: item.id,
-      name: item.name,
+      name: item.displayName,
       abbreviation: item.abbreviation,
-      teamName: item.teamName,
-      shortName: item.shortName,
-    } as MLBTeam;
+      teamName: item.nickname,
+      shortName: item.shortDisplayName,
+    } as NFLTeam;
     const prismaTeam = {
-      id: item.id.toString(),
+      id: item.id,
       fullName: item.name,
-      city: item.locationName,
+      city: item.location,
       abbreviation: item.abbreviation,
-      shortName: item.shortName,
-      sport: 'BASEBALL',
-      league: item.sport.name,
+      shortName: item.shortDisplayName,
+      sport: 'FOOTBALL',
+      league: league.name,
     } as Team;
-    const teamIdentifier = `${
-      prismaTeam.id
-    }-${prismaTeam.city.toLowerCase()}-${prismaTeam.shortName.toLowerCase()}`;
+    const teamIdentifier = `${prismaTeam.id}-${item.slug}`;
 
     try {
       await prisma.team.upsert({
@@ -54,60 +54,53 @@ export default async function getBaseball() {
     } catch {}
 
     const rosterResult = (await proxy(
-      `https://statsapi.mlb.com/api/v1/teams/${item.id}/roster/`
-    )) as MLBRosterResult;
+      `https://site.api.espn.com/apis/site/v2/sports/football/nfl/teams/${item.id}/roster`
+    )) as NFLRosterResult;
 
-    for (const rosterItem of rosterResult.roster) {
+    for (const athlete of rosterResult.athletes) {
       try {
-        const person = rosterItem.person;
-        const position = rosterItem.position;
-        const lastName = person.fullName.split(' ')[1] ?? person.fullName;
-        const firstName = person.fullName.split(' ')[0] ?? person.fullName;
+        const person = athlete.item;
+        const position = person.position;
+        const lastName = person.lastName;
+        const firstName = person.firstName;
         const player = {
           id: parseInt(person.id || '-1'),
           lastName: lastName,
           firstName: firstName,
           team: team,
-          position: position.abbreviation,
-          number: parseInt(rosterItem.jerseyNumber || '-1'),
+          position: position.displayName,
+          number: parseInt(person.jersey || '-1'),
           _type: 'player',
-          url: `https://www.mlb.com/player/${lastName.toLowerCase()}-${firstName.toLowerCase()}-${
-            person.id
-          }`,
-          image: `https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_426,q_auto:best/v1/people/${person.id}/headshot/67/current`,
-          source: 'MLB.com',
-        } as MLBPlayer;
+          url: person.links[0].href,
+          image: person.headshot.href,
+          source: 'ESPN.com',
+        } as NFLPlayer;
+        const playerIdentifier = `${player.id}-${person.slug}`;
 
         await prisma.player.upsert({
           where: {
-            identifier: `${
-              player.id
-            }-${player.firstName.toLowerCase()}-${player.lastName.toLowerCase()}`,
+            identifier: playerIdentifier,
           },
           update: {
-            identifier: `${
-              player.id
-            }-${player.firstName.toLowerCase()}-${player.lastName.toLowerCase()}`,
+            identifier: playerIdentifier,
             firstName: player.firstName,
             lastName: player.lastName,
             fullName: `${player.firstName} ${player.lastName}`,
             position: player.position,
             logoUrl: player.image,
             linkUrl: player.url,
-            sport: 'Baseball',
+            sport: 'Football',
             team: { connect: { identifier: teamIdentifier } },
           },
           create: {
-            identifier: `${
-              player.id
-            }-${player.firstName.toLowerCase()}-${player.lastName.toLowerCase()}`,
+            identifier: playerIdentifier,
             firstName: player.firstName,
             lastName: player.lastName,
             fullName: `${player.firstName} ${player.lastName}`,
             position: player.position,
             logoUrl: player.image,
             linkUrl: player.url,
-            sport: 'Baseball',
+            sport: 'Football',
             team: { connect: { identifier: teamIdentifier } },
           },
         });
