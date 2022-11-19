@@ -34,7 +34,7 @@ declare type NHLPlayerResult = {
   };
 };
 
-declare type NHLResult = {
+declare type NHLTeamResult = {
   teams: [
     {
       id: number;

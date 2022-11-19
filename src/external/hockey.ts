@@ -2,11 +2,11 @@ import proxy from '../lib/proxy';
 import prisma from '../lib/prisma';
 
 export default async function getHockey() {
-  const response = (await proxy(
+  const teamResult = (await proxy(
     `https://statsapi.web.nhl.com/api/v1/teams`
-  )) as NHLResult;
+  )) as NHLTeamResult;
 
-  for (const item of response.teams) {
+  for (const item of teamResult.teams) {
     const team = {
       id: item.id,
       name: item.name,
@@ -111,5 +111,5 @@ export default async function getHockey() {
     }
   }
 
-  return;
+  return Promise.resolve();
 }

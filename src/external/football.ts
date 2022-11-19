@@ -2,11 +2,11 @@ import proxy from '../lib/proxy';
 import prisma from '../lib/prisma';
 
 export default async function getFootball() {
-  const teamResponse = (await proxy(
+  const teamResult = (await proxy(
     `https://site.api.espn.com/apis/site/v2/sports/football/nfl/teams`
   )) as NFLResult;
 
-  const league = teamResponse.sports[0].leagues[0];
+  const league = teamResult.sports[0].leagues[0];
   for (const t of league.teams) {
     const item = t.team;
     const team = {
@@ -108,5 +108,5 @@ export default async function getFootball() {
     }
   }
 
-  return;
+  return Promise.resolve();
 }

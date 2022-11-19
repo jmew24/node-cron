@@ -2,11 +2,11 @@ import proxy from '../lib/proxy';
 import prisma from '../lib/prisma';
 
 export default async function getBaseball() {
-  const teamResponse = (await proxy(
+  const teamResult = (await proxy(
     `https://statsapi.mlb.com/api/v1/teams/`
   )) as MLBResult;
 
-  for (const item of teamResponse.teams) {
+  for (const item of teamResult.teams) {
     const team = {
       id: item.id,
       name: item.name,
@@ -115,5 +115,5 @@ export default async function getBaseball() {
     }
   }
 
-  return;
+  return Promise.resolve();
 }

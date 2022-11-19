@@ -15,10 +15,16 @@ cron.schedule('00 08 * * *', function () {
   console.log(`[${new Date()}] Running Cron Job for NHL Logging`);
 
   // Get all NHL players.
-  getHockey().finally(() => {
-    console.log(`[${new Date()}] Completed Cron Job for NHL Logging`);
-    console.log('---------------------');
-  });
+  getHockey()
+    .then(() => {
+      console.log(`[${new Date()}] Completed Cron Job for NHL Logging`);
+      console.log('---------------------');
+    })
+    .catch((error) => {
+      console.log(`[${new Date()}] Error Cron Job for NHL Logging`);
+      console.error(error);
+      console.log('---------------------');
+    });
 });
 
 // Run at 08:30 AM every day.
@@ -27,10 +33,16 @@ cron.schedule('30 08 * * *', function () {
   console.log(`[${new Date()}] Running Cron Job for MLB Logging`);
 
   // Get all MLB players.
-  getBaseball().finally(() => {
-    console.log(`[${new Date()}] Completed Cron Job for MLB Logging`);
-    console.log('---------------------');
-  });
+  getBaseball()
+    .then(() => {
+      console.log(`[${new Date()}] Completed Cron Job for MLB Logging`);
+      console.log('---------------------');
+    })
+    .catch((error) => {
+      console.log(`[${new Date()}] Error Cron Job for MLB Logging`);
+      console.error(error);
+      console.log('---------------------');
+    });
 });
 
 // Run at 09:00 AM every day.
@@ -39,10 +51,16 @@ cron.schedule('00 09 * * *', function () {
   console.log(`[${new Date()}] Running Cron Job for NFL Logging`);
 
   // Get all NFL players.
-  getFootball().finally(() => {
-    console.log(`[${new Date()}] Completed Cron Job for NFL Logging`);
-    console.log('---------------------');
-  });
+  getFootball()
+    .then(() => {
+      console.log(`[${new Date()}] Completed Cron Job for NFL Logging`);
+      console.log('---------------------');
+    })
+    .catch((error) => {
+      console.log(`[${new Date()}] Error Cron Job for NFL Logging`);
+      console.error(error);
+      console.log('---------------------');
+    });
 });
 
 process.on('SIGTERM', async () => {
