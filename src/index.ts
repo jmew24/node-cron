@@ -1,5 +1,7 @@
-import cron from 'node-cron';
+import * as cron from 'node-cron';
 
-cron.schedule(`*/1 * * * *`, async () => {
-  console.log(`running your task...`);
+// Run at 08:59 PM every day.
+cron.schedule('59 08 * * *', function () {
+  console.log('---------------------');
+  console.log('Running Cron Job');
 });
