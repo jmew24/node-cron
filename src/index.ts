@@ -5,9 +5,15 @@ import getHockey from './external/hockey';
 import getBaseball from './external/baseball';
 import getFootball from './external/football';
 
-console.log('---------------------');
-console.log(`[${new Date()}] Started cron job scheduler...`);
-console.log('---------------------');
+process.on('SIGTERM', async () => {
+  try {
+    await prisma.$disconnect();
+  } catch {}
+
+  console.log('---------------------');
+  console.log(`[${new Date()}] Ended cron job scheduler...`);
+  console.log('---------------------');
+});
 
 // Run at 08:00 AM every day.
 cron.schedule('00 08 * * *', function () {
@@ -63,12 +69,23 @@ cron.schedule('00 09 * * *', function () {
     });
 });
 
-process.on('SIGTERM', async () => {
-  try {
-    await prisma.$disconnect();
-  } catch {}
+const startUp = async () => {
+  console.log('---------------------');
+  console.log(`[${new Date()}] Starting cron job scheduler...`);
+  console.log('---------------------');
+
+  // Get all NHL players.
+  await getHockey();
+
+  // Get all MLB players.
+  await getBaseball();
+
+  // Get all NFL players.
+  await getFootball();
 
   console.log('---------------------');
-  console.log(`[${new Date()}] Ended cron job scheduler...`);
+  console.log(`[${new Date()}] Completed startup...`);
   console.log('---------------------');
-});
+};
+
+startUp();
