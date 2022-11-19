@@ -15,8 +15,8 @@ process.on('SIGTERM', async () => {
   console.log('---------------------');
 });
 
-// Run at 08:00 AM every day.
-cron.schedule('00 08 * * *', function () {
+// Run at 11:00 AM every day.
+cron.schedule('00 11 * * *', function () {
   console.log('---------------------');
   console.log(`[${new Date()}] Running Cron Job for NHL Logging`);
 
@@ -33,8 +33,8 @@ cron.schedule('00 08 * * *', function () {
     });
 });
 
-// Run at 08:30 AM every day.
-cron.schedule('30 08 * * *', function () {
+// Run at 11:30 AM every day.
+cron.schedule('30 11 * * *', function () {
   console.log('---------------------');
   console.log(`[${new Date()}] Running Cron Job for MLB Logging`);
 
@@ -51,8 +51,8 @@ cron.schedule('30 08 * * *', function () {
     });
 });
 
-// Run at 09:00 AM every day.
-cron.schedule('00 09 * * *', function () {
+// Run at 12:00 AM every day.
+cron.schedule('00 12 * * *', function () {
   console.log('---------------------');
   console.log(`[${new Date()}] Running Cron Job for NFL Logging`);
 
