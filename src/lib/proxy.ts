@@ -1,3 +1,5 @@
+import * as dotenv from 'dotenv';
+dotenv.config();
 const corsAnywhere = process.env.PUBLIC_CORS || '';
 
 type requestOptions = RequestInit & {
