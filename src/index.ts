@@ -4,6 +4,7 @@ import prisma from './lib/prisma';
 import getHockey from './external/hockey';
 import getBaseball from './external/baseball';
 import getFootball from './external/football';
+import getBasketball from './external/basketball';
 
 let hasStarted = false;
 
@@ -31,7 +32,7 @@ cron.schedule('00 11 * * *', async () => {
   console.log('---------------------');
 });
 
-// Run at 12:00 every day.
+// Run at 11:30 every day.
 cron.schedule('30 11 * * *', async () => {
   if (!hasStarted) return;
 
@@ -45,7 +46,7 @@ cron.schedule('30 11 * * *', async () => {
   console.log('---------------------');
 });
 
-// Run at 13:00 every day.
+// Run at 12:00 every day.
 cron.schedule('00 12 * * *', async () => {
   if (!hasStarted) return;
 
@@ -56,6 +57,20 @@ cron.schedule('00 12 * * *', async () => {
   await getFootball();
 
   console.log(`[${new Date()}] Completed Cron Job for NFL Logging`);
+  console.log('---------------------');
+});
+
+// Run at 12:30 every day.
+cron.schedule('30 12 * * *', async () => {
+  if (!hasStarted) return;
+
+  console.log('---------------------');
+  console.log(`[${new Date()}] Running Cron Job for NBA Logging`);
+
+  // Get all NFL players.
+  await getBasketball();
+
+  console.log(`[${new Date()}] Completed Cron Job for NBA Logging`);
   console.log('---------------------');
 });
 
@@ -79,6 +94,11 @@ const startUp = async () => {
   console.log(`[${new Date()}] Running NFL Logging`);
   await getFootball();
   console.log(`[${new Date()}] Completed NFL Logging`);
+
+  // Get all NBA players.
+  console.log(`[${new Date()}] Running NBA Logging`);
+  await getBasketball();
+  console.log(`[${new Date()}] Completed NBA Logging`);
 
   console.log('---------------------');
   console.log(`[${new Date()}] Completed startup...`);

@@ -1,75 +1,55 @@
-declare interface BasketballProps {
-  query: string;
-  setShow: Dispatch<SetStateAction<SearchShowSport>>;
-}
-
-declare type NBAPosition = "C" | "F" | "C-F" | "F-C" | "G" | "F-G" | "";
-
-declare type NBATeam = {
-  id: string;
-  name: string;
-  abbreviation: string;
-  city: string;
-};
-
-declare type NBATeamRequest = {
-  copyright: string;
-  teams: NBATeam[];
-};
-
-declare type NBATeamsRequest = {
-  results: NBATeam[];
-};
-
-declare type NBATeamResult = NBATeam[];
-
-declare interface NBATeamProps {
-  query: string;
-}
-
-declare type NBATeamFilter = {
-  team: string;
-};
-
-declare type NBAPlayer = {
-  id: string;
-  code: string;
-  displayName: string;
-  firstName: string;
-  lastName: string;
-  jerseyNo: string;
-  position: string;
-  team: NBATeam;
-  url: string;
-  image: string;
-  source: string;
-};
-
-declare type NBARequestPlayers = {
-  playerProfile: NBAPlayer & { playerId: string };
-  teamProfile: NBATeam;
-};
-
-declare type NBAPlayerRequest = {
-  payload: {
-    players: NBARequestPlayers[];
-    error: {
-      detail: string | null;
-      isError: string | boolean;
-      message: string | null;
-    };
-    timestamp: string;
+declare type NBATeamRosterResult = {
+  error: {
+    detail: string | null;
+    isError: string;
+    message: string | null;
   };
+  payload: {
+    profile: {
+      abbr: string;
+      city: string;
+      cityEn: string;
+      code: string;
+      conference: string;
+      displayAbbr: string;
+      id: string;
+      isLeagueTeam: boolean;
+      leagueId: string;
+      nameEn: string;
+    };
+    players: [
+      {
+        profile: {
+          code: string;
+          displayNameEn: string;
+          firstNameEn: string;
+          jerseyNo: string;
+          lastNameEn: string;
+          leagueId: string;
+          playerId: string;
+          position: string;
+        };
+      }
+    ];
+  };
+  timestamp: string;
 };
 
-declare type NBARequest = {
-  query: string;
-  results: NBAPlayer[];
-};
-
-declare type NBAPlayerResult = NBAPlayer[];
-
-declare type NBAPlayerFilter = {
-  team: string;
-  position: string;
+declare type NBAResult = {
+  payload: {
+    league: {
+      name: string;
+    };
+    listGroups: [
+      {
+        teams: [
+          {
+            profile: {
+              code: string;
+            };
+          }
+        ];
+      }
+    ];
+  };
 };
