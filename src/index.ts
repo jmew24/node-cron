@@ -5,6 +5,8 @@ import getHockey from './external/hockey';
 import getBaseball from './external/baseball';
 import getFootball from './external/football';
 
+let hasStarted = false;
+
 process.on('SIGTERM', async () => {
   try {
     await prisma.$disconnect();
@@ -15,77 +17,73 @@ process.on('SIGTERM', async () => {
   console.log('---------------------');
 });
 
-// Run at 11:00 AM every day.
-cron.schedule('00 11 * * *', function () {
+// Run at 11:00 every day.
+cron.schedule('00 11 * * *', async () => {
+  if (!hasStarted) return;
+
   console.log('---------------------');
   console.log(`[${new Date()}] Running Cron Job for NHL Logging`);
 
   // Get all NHL players.
-  getHockey()
-    .then(() => {
-      console.log(`[${new Date()}] Completed Cron Job for NHL Logging`);
-      console.log('---------------------');
-    })
-    .catch((error) => {
-      console.log(`[${new Date()}] Error Cron Job for NHL Logging`);
-      console.error(error);
-      console.log('---------------------');
-    });
+  await getHockey();
+
+  console.log(`[${new Date()}] Completed Cron Job for NHL Logging`);
+  console.log('---------------------');
 });
 
-// Run at 11:30 AM every day.
-cron.schedule('30 11 * * *', function () {
+// Run at 12:00 every day.
+cron.schedule('30 11 * * *', async () => {
+  if (!hasStarted) return;
+
   console.log('---------------------');
   console.log(`[${new Date()}] Running Cron Job for MLB Logging`);
 
   // Get all MLB players.
-  getBaseball()
-    .then(() => {
-      console.log(`[${new Date()}] Completed Cron Job for MLB Logging`);
-      console.log('---------------------');
-    })
-    .catch((error) => {
-      console.log(`[${new Date()}] Error Cron Job for MLB Logging`);
-      console.error(error);
-      console.log('---------------------');
-    });
+  await getBaseball();
+
+  console.log(`[${new Date()}] Completed Cron Job for MLB Logging`);
+  console.log('---------------------');
 });
 
-// Run at 12:00 AM every day.
-cron.schedule('00 12 * * *', function () {
+// Run at 13:00 every day.
+cron.schedule('00 12 * * *', async () => {
+  if (!hasStarted) return;
+
   console.log('---------------------');
   console.log(`[${new Date()}] Running Cron Job for NFL Logging`);
 
   // Get all NFL players.
-  getFootball()
-    .then(() => {
-      console.log(`[${new Date()}] Completed Cron Job for NFL Logging`);
-      console.log('---------------------');
-    })
-    .catch((error) => {
-      console.log(`[${new Date()}] Error Cron Job for NFL Logging`);
-      console.error(error);
-      console.log('---------------------');
-    });
+  await getFootball();
+
+  console.log(`[${new Date()}] Completed Cron Job for NFL Logging`);
+  console.log('---------------------');
 });
 
 const startUp = async () => {
+  hasStarted = false;
   console.log('---------------------');
   console.log(`[${new Date()}] Starting cron job scheduler...`);
   console.log('---------------------');
 
   // Get all NHL players.
+  console.log(`[${new Date()}] Running NHL Logging`);
   await getHockey();
+  console.log(`[${new Date()}] Completed NHL Logging`);
 
   // Get all MLB players.
+  console.log(`[${new Date()}] Running MLB Logging`);
   await getBaseball();
+  console.log(`[${new Date()}] Completed MLB Logging`);
 
   // Get all NFL players.
+  console.log(`[${new Date()}] Running NFL Logging`);
   await getFootball();
+  console.log(`[${new Date()}] Completed NFL Logging`);
 
   console.log('---------------------');
   console.log(`[${new Date()}] Completed startup...`);
   console.log('---------------------');
+  hasStarted = true;
 };
 
 startUp();

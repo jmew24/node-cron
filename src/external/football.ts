@@ -1,3 +1,5 @@
+import { Prisma } from '@prisma/client';
+
 import proxy from '../lib/proxy';
 import prisma from '../lib/prisma';
 
@@ -6,107 +8,64 @@ export default async function getFootball() {
     `https://site.api.espn.com/apis/site/v2/sports/football/nfl/teams`
   )) as NFLResult;
 
+  await prisma.team.deleteMany({
+    where: { sport: 'FOOTBALL', source: 'ESPN.com' },
+  });
+
   const league = teamResult.sports[0].leagues[0];
   for (const t of league.teams) {
-    const item = t.team;
-    const team = {
-      id: item.id,
-      name: item.displayName,
-      abbreviation: item.abbreviation,
-      teamName: item.nickname,
-      shortName: item.shortDisplayName,
-    } as NFLTeam;
-    const prismaTeam = {
-      id: item.id,
-      fullName: item.name,
-      city: item.location,
-      abbreviation: item.abbreviation,
-      shortName: item.shortDisplayName,
-      sport: 'FOOTBALL',
-      league: league.name,
-    } as Team;
-    const teamIdentifier = `${prismaTeam.id}-${item.slug}`;
-
     try {
-      await prisma.team.upsert({
-        where: {
+      const item = t.team;
+      const teamIdentifier = `${item.id}-${league.name}-${item.slug}`;
+
+      const createdTeam = await prisma.team.create({
+        data: {
           identifier: teamIdentifier,
-        },
-        update: {
-          identifier: teamIdentifier,
-          fullName: prismaTeam.fullName,
-          city: prismaTeam.city,
-          abbreviation: prismaTeam.abbreviation,
-          shortName: prismaTeam.shortName,
-          sport: prismaTeam.sport,
-          league: prismaTeam.league,
-        },
-        create: {
-          identifier: teamIdentifier,
-          fullName: prismaTeam.fullName,
-          city: prismaTeam.city,
-          abbreviation: prismaTeam.abbreviation,
-          shortName: prismaTeam.shortName,
-          sport: prismaTeam.sport,
-          league: prismaTeam.league,
+          fullName: item.name,
+          city: item.location,
+          abbreviation: item.abbreviation,
+          shortName: item.shortDisplayName,
+          sport: 'FOOTBALL',
+          league: league.name,
+          source: 'ESPN.com',
         },
       });
-    } catch {}
 
-    const rosterResult = (await proxy(
-      `https://site.api.espn.com/apis/site/v2/sports/football/nfl/teams/${item.id}/roster`
-    )) as NFLRosterResult;
+      const rosterResult = (await proxy(
+        `https://site.api.espn.com/apis/site/v2/sports/football/nfl/teams/${item.id}/roster`
+      )) as NFLRosterResult;
 
-    for (const athlete of rosterResult.athletes) {
-      try {
-        const person = athlete.item;
-        const position = person.position;
-        const lastName = person.lastName;
-        const firstName = person.firstName;
-        const player = {
-          id: parseInt(person.id || '-1'),
-          lastName: lastName,
-          firstName: firstName,
-          team: team,
-          position: position.displayName,
-          number: parseInt(person.jersey || '-1'),
-          _type: 'player',
-          url: person.links[0].href,
-          image: person.headshot.href,
-          source: 'ESPN.com',
-        } as NFLPlayer;
-        const playerIdentifier = `${player.id}-${person.slug}`;
+      if (rosterResult.athletes) {
+        const players = [] as Prisma.PlayerCreateManyInput[];
+        for (const athlete of rosterResult.athletes) {
+          const person = athlete.item;
+          const position = person.position;
+          const lastName = person.lastName;
+          const firstName = person.firstName;
+          const playerIdentifier = `${person.id}-${league.name}-${person.slug}`;
 
-        await prisma.player.upsert({
-          where: {
+          players.push({
             identifier: playerIdentifier,
-          },
-          update: {
-            identifier: playerIdentifier,
-            firstName: player.firstName,
-            lastName: player.lastName,
-            fullName: `${player.firstName} ${player.lastName}`,
-            position: player.position,
-            logoUrl: player.image,
-            linkUrl: player.url,
-            sport: 'Football',
-            team: { connect: { identifier: teamIdentifier } },
-          },
-          create: {
-            identifier: playerIdentifier,
-            firstName: player.firstName,
-            lastName: player.lastName,
-            fullName: `${player.firstName} ${player.lastName}`,
-            position: player.position,
-            logoUrl: player.image,
-            linkUrl: player.url,
-            sport: 'Football',
-            team: { connect: { identifier: teamIdentifier } },
-          },
+            firstName: firstName,
+            lastName: lastName,
+            fullName: `${firstName} ${lastName}`,
+            position: position.displayName,
+            number: parseInt(person.jersey || '-1'),
+            headshotUrl: person.headshot.href,
+            linkUrl: person.links[0].href,
+            sport: 'FOOTBALL',
+            source: 'ESPN.com',
+            teamId: createdTeam.id,
+          });
+        }
+
+        await prisma.player.createMany({
+          data: players,
+          skipDuplicates: true,
         });
-      } catch {}
-    }
+      }
+    } catch {}
   }
 
-  return Promise.resolve();
+  return true;
 }

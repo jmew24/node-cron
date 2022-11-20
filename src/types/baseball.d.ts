@@ -1,24 +1,3 @@
-declare type MLBTeam = {
-  id: number;
-  name: string;
-  abbreviation: string;
-  teamName: string;
-  shortName: string;
-};
-
-declare type MLBPlayer = {
-  id: number;
-  firstName: string;
-  lastName: string;
-  team: MLBTeam;
-  position: string;
-  number: number;
-  _type: 'player' | 'coach' | 'staff';
-  url: string;
-  image: string;
-  source: string;
-};
-
 declare type MLBPlayerResult = {
   person: {
     id: string;

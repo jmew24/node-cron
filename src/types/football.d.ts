@@ -1,24 +1,3 @@
-declare type NFLTeam = {
-  id: string;
-  name: string;
-  abbreviation: string;
-  teamName: string;
-  shortName: string;
-};
-
-declare type NFLPlayer = {
-  id: number;
-  firstName: string;
-  lastName: string;
-  team: NFLTeam;
-  position: string;
-  number: number;
-  _type: 'player' | 'coach' | 'staff';
-  url: string;
-  image: string;
-  source: string;
-};
-
 declare type NFLAthleteResult = {
   position: string;
   item: {

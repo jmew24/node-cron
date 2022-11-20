@@ -1,115 +1,73 @@
+import { Prisma } from '@prisma/client';
+
 import proxy from '../lib/proxy';
 import prisma from '../lib/prisma';
 
 export default async function getHockey() {
   const teamResult = (await proxy(
-    `https://statsapi.web.nhl.com/api/v1/teams`
+    `https://statsapi.web.nhl.com/api/v1/teams?expand=team.roster`
   )) as NHLTeamResult;
 
-  for (const item of teamResult.teams) {
-    const team = {
-      id: item.id,
-      name: item.name,
-      abbreviation: item.abbreviation,
-      teamName: item.teamName,
-      shortName: item.shortName,
-    } as NHLTeam;
-    const prismaTeam = {
-      id: item.id.toString(),
-      fullName: item.name,
-      city: item.venue.city,
-      abbreviation: item.abbreviation,
-      shortName: item.shortName,
-      sport: 'HOCKEY',
-      league: 'National Hockey League',
-    } as Team;
-    const teamIdentifier = `${
-      prismaTeam.id
-    }-${prismaTeam.city.toLowerCase()}-${prismaTeam.shortName.toLowerCase()}`;
+  await prisma.team.deleteMany({
+    where: { sport: 'HOCKEY', source: 'NHL.com' },
+  });
 
+  for (const item of teamResult.teams) {
     try {
-      await prisma.team.upsert({
-        where: {
+      const league = 'National Hockey League';
+      const teamIdentifier = `${
+        item.id
+      }-${league}-${item.locationName.toLowerCase()}-${item.teamName.toLowerCase()}`;
+
+      const createdTeam = await prisma.team.create({
+        data: {
           identifier: teamIdentifier,
-        },
-        update: {
-          identifier: teamIdentifier,
-          fullName: prismaTeam.fullName,
-          city: prismaTeam.city,
-          abbreviation: prismaTeam.abbreviation,
-          shortName: prismaTeam.shortName,
-          sport: prismaTeam.sport,
-          league: prismaTeam.league,
-        },
-        create: {
-          identifier: teamIdentifier,
-          fullName: prismaTeam.fullName,
-          city: prismaTeam.city,
-          abbreviation: prismaTeam.abbreviation,
-          shortName: prismaTeam.shortName,
-          sport: prismaTeam.sport,
-          league: prismaTeam.league,
+          fullName: item.name,
+          city: item.locationName,
+          abbreviation: item.abbreviation,
+          shortName: item.teamName,
+          sport: 'HOCKEY',
+          league: league,
+          source: 'NHL.com',
         },
       });
-    } catch {}
 
-    const roster = item.roster.roster as NHLPlayerResult[];
-    for (const rosterItem of roster) {
-      try {
-        const person = rosterItem.person;
-        const position = rosterItem.position;
-        const player = {
-          id: parseInt(person.id || '-1'),
-          lastName: person.fullName.split(' ')[1] ?? person.fullName,
-          firstName: person.fullName.split(' ')[0] ?? person.fullName,
-          team: team,
-          position: position.abbreviation,
-          number: parseInt(rosterItem.jerseyNumber || '-1'),
-          _type: 'player',
-          url: `https://www.nhl.com/player/${person.fullName
-            .toLowerCase()
-            .split(' ')
-            .join('_')}`,
-          image: `https://cms.nhl.bamgrid.com/images/headshots/current/168x168/${person.id}.jpg`,
-          source: 'NHL.com',
-        } as NHLPlayer;
+      if (item.roster && item.roster.roster) {
+        const roster = item.roster.roster as NHLPlayerResult[];
+        const players = [] as Prisma.PlayerCreateManyInput[];
+        for (const rosterItem of roster) {
+          const person = rosterItem.person;
+          const position = rosterItem.position;
+          const lastName = person.fullName.split(' ')[1] ?? person.fullName;
+          const firstName = person.fullName.split(' ')[0] ?? person.fullName;
 
-        await prisma.player.upsert({
-          where: {
+          players.push({
             identifier: `${
-              player.id
-            }-${player.firstName.toLowerCase()}-${player.lastName.toLowerCase()}`,
-          },
-          update: {
-            identifier: `${
-              player.id
-            }-${player.firstName.toLowerCase()}-${player.lastName.toLowerCase()}`,
-            firstName: player.firstName,
-            lastName: player.lastName,
-            fullName: `${player.firstName} ${player.lastName}`,
-            position: player.position,
-            logoUrl: player.image,
-            linkUrl: player.url,
-            sport: 'Hockey',
-            team: { connect: { identifier: teamIdentifier } },
-          },
-          create: {
-            identifier: `${
-              player.id
-            }-${player.firstName.toLowerCase()}-${player.lastName.toLowerCase()}`,
-            firstName: player.firstName,
-            lastName: player.lastName,
-            fullName: `${player.firstName} ${player.lastName}`,
-            position: player.position,
-            logoUrl: player.image,
-            linkUrl: player.url,
-            sport: 'Hockey',
-            team: { connect: { identifier: teamIdentifier } },
-          },
+              person.id
+            }-${league}-${firstName.toLowerCase()}-${lastName.toLowerCase()}`,
+            firstName: firstName,
+            lastName: lastName,
+            fullName: person.fullName,
+            position: position.abbreviation,
+            number: parseInt(rosterItem.jerseyNumber || '-1'),
+            headshotUrl: `https://cms.nhl.bamgrid.com/images/headshots/current/168x168/${person.id}.jpg`,
+            linkUrl: `https://www.nhl.com/player/${person.fullName
+              .toLowerCase()
+              .split(' ')
+              .join('_')}`,
+            sport: 'HOCKEY',
+            source: 'NHL.com',
+            teamId: createdTeam.id,
+          });
+        }
+
+        await prisma.player.createMany({
+          data: players,
+          skipDuplicates: true,
         });
-      } catch {}
-    }
+      }
+    } catch {}
   }
 
-  return Promise.resolve();
+  return true;
 }

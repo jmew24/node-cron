@@ -1,24 +1,3 @@
-declare type NHLTeam = {
-  id: number;
-  name: string;
-  abbreviation: string;
-  teamName: string;
-  shortName: string;
-};
-
-declare type NHLPlayer = {
-  id: number;
-  firstName: string;
-  lastName: string;
-  team: NHLTeam;
-  position: string;
-  number: number;
-  _type: 'player' | 'coach' | 'staff';
-  url: string;
-  image: string;
-  source: string;
-};
-
 declare type NHLPlayerResult = {
   person: {
     id: string;

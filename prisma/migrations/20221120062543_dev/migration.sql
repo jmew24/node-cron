@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "player" ALTER COLUMN "source" SET DEFAULT 'UNKNOWN';
+
+-- AlterTable
+ALTER TABLE "team" ALTER COLUMN "source" SET DEFAULT 'UNKNOWN';
