@@ -15,9 +15,8 @@ export default async function getHockey() {
   for (const item of teamResult.teams) {
     try {
       const league = 'National Hockey League';
-      const teamIdentifier = `${
-        item.id
-      }-${league}-${item.locationName.toLowerCase()}-${item.teamName.toLowerCase()}`;
+      const teamIdentifier =
+        `${item.id}-${league}-${item.locationName}-${item.teamName}`.toLowerCase();
 
       const createdTeam = await prisma.team.create({
         data: {
@@ -42,9 +41,8 @@ export default async function getHockey() {
           const firstName = person.fullName.split(' ')[0] ?? person.fullName;
 
           players.push({
-            identifier: `${
-              person.id
-            }-${league}-${firstName.toLowerCase()}-${lastName.toLowerCase()}`,
+            identifier:
+              `${person.id}-${league}-${firstName}-${lastName}`.toLowerCase(),
             firstName: firstName,
             lastName: lastName,
             fullName: person.fullName,
@@ -66,7 +64,9 @@ export default async function getHockey() {
           skipDuplicates: true,
         });
       }
-    } catch {}
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   return true;

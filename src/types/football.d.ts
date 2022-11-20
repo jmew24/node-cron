@@ -28,19 +28,6 @@ declare type NFLRosterResult = {
   athletes: NFLAthleteResult[];
 };
 
-declare type NFLTeamResult = {
-  team: {
-    id: string;
-    slug: string;
-    abbreviation: string;
-    displayName: string;
-    shortDisplayName: string;
-    name: string;
-    nickname: string;
-    location: string;
-  };
-};
-
 declare type NFLResult = {
   sports: [
     {

@@ -16,7 +16,8 @@ export default async function getFootball() {
   for (const t of league.teams) {
     try {
       const item = t.team;
-      const teamIdentifier = `${item.id}-${league.name}-${item.slug}`;
+      const teamIdentifier =
+        `${item.id}-${league.name}-${item.slug}`.toLowerCase();
 
       const createdTeam = await prisma.team.create({
         data: {
@@ -42,7 +43,8 @@ export default async function getFootball() {
           const position = person.position;
           const lastName = person.lastName;
           const firstName = person.firstName;
-          const playerIdentifier = `${person.id}-${league.name}-${person.slug}`;
+          const playerIdentifier =
+            `${person.id}-${league.name}-${person.slug}`.toLowerCase();
 
           players.push({
             identifier: playerIdentifier,
@@ -64,7 +66,9 @@ export default async function getFootball() {
           skipDuplicates: true,
         });
       }
-    } catch {}
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   return true;

@@ -14,9 +14,8 @@ export default async function getBaseball() {
 
   for (const item of teamResult.teams) {
     try {
-      const teamIdentifier = `${item.id}-${
-        item.sport.name
-      }-${item.locationName.toLowerCase()}-${item.teamName.toLowerCase()}`;
+      const teamIdentifier =
+        `${item.id}-${item.sport.name}-${item.locationName}-${item.teamName}`.toLowerCase();
 
       const createdTeam = await prisma.team.create({
         data: {
@@ -44,9 +43,8 @@ export default async function getBaseball() {
           const firstName = person.fullName.split(' ')[0] ?? person.fullName;
 
           players.push({
-            identifier: `${person.id}-${
-              item.sport.name
-            }-${firstName.toLowerCase()}-${lastName.toLowerCase()}`,
+            identifier:
+              `${person.id}-${item.sport.name}-${firstName}-${lastName}`.toLowerCase(),
             lastName: lastName,
             firstName: firstName,
             fullName: person.fullName,
@@ -67,7 +65,9 @@ export default async function getBaseball() {
           skipDuplicates: true,
         });
       }
-    } catch {}
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   return true;
