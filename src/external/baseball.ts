@@ -1,10 +1,10 @@
 import { Prisma } from '@prisma/client';
 
-import proxy from '../lib/proxy';
+import fetchRequest from '../lib/fetchRequest';
 import prisma from '../lib/prisma';
 
 export default async function getBaseball() {
-  const teamResult = (await proxy(
+  const teamResult = (await fetchRequest(
     `https://statsapi.mlb.com/api/v1/teams/`
   )) as MLBResult;
 
@@ -31,7 +31,7 @@ export default async function getBaseball() {
         },
       });
 
-      const rosterResult = (await proxy(
+      const rosterResult = (await fetchRequest(
         `https://statsapi.mlb.com/api/v1/teams/${item.id}/roster/`
       )) as MLBRosterResult;
 

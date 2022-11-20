@@ -1,10 +1,10 @@
 import { Prisma } from '@prisma/client';
 
-import proxy from '../lib/proxy';
+import fetchRequest from '../lib/fetchRequest';
 import prisma from '../lib/prisma';
 
 export default async function getFootball() {
-  const teamResult = (await proxy(
+  const teamResult = (await fetchRequest(
     `https://site.api.espn.com/apis/site/v2/sports/football/nfl/teams`
   )) as NFLResult;
 
@@ -31,7 +31,7 @@ export default async function getFootball() {
         },
       });
 
-      const rosterResult = (await proxy(
+      const rosterResult = (await fetchRequest(
         `https://site.api.espn.com/apis/site/v2/sports/football/nfl/teams/${item.id}/roster`
       )) as NFLRosterResult;
 

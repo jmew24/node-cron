@@ -1,10 +1,10 @@
 import { Prisma } from '@prisma/client';
 
-import proxy from '../lib/proxy';
+import fetchRequest from '../lib/fetchRequest';
 import prisma from '../lib/prisma';
 
 export default async function getHockey() {
-  const teamResult = (await proxy(
+  const teamResult = (await fetchRequest(
     `https://statsapi.web.nhl.com/api/v1/teams?expand=team.roster`
   )) as NHLTeamResult;
 
