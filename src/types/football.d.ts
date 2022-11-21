@@ -1,31 +1,33 @@
-declare type NFLAthleteResult = {
-  position: string;
-  item: {
-    id: string;
-    firstName: string;
-    lastName: string;
-    links: [
-      {
-        href: string;
-      }
-    ];
-    headshot: {
-      href: string;
-    };
-    slug: string;
-    jersey: string;
-    position: {
-      id: string;
-      name: string;
-      displayName: string;
-      abbreviation: string;
-    };
-  };
-};
-
 declare type NFLRosterResult = {
   coach: [];
-  athletes: NFLAthleteResult[];
+  athletes: [
+    {
+      position: string;
+      items: [
+        {
+          id: string;
+          firstName: string;
+          lastName: string;
+          links: [
+            {
+              href: string;
+            }
+          ];
+          headshot: {
+            href: string;
+          };
+          slug: string;
+          jersey: string;
+          position: {
+            id: string;
+            name: string;
+            displayName: string;
+            abbreviation: string;
+          };
+        }
+      ];
+    }
+  ];
 };
 
 declare type NFLResult = {
@@ -43,7 +45,20 @@ declare type NFLResult = {
           abbreviation: string;
           shortName: string;
           slug: string;
-          teams: NFLTeamResult[];
+          teams: [
+            {
+              team: {
+                id: string;
+                slug: string;
+                abbreviation: string;
+                displayName: string;
+                shortDisplayName: string;
+                name: string;
+                nickname: string;
+                location: string;
+              };
+            }
+          ];
         }
       ];
     }

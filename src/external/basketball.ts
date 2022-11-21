@@ -30,6 +30,8 @@ export default async function getBasketball() {
         const teamIdentifier =
           `${item.id}-${item.cityEn}-${item.nameEn}`.toLowerCase();
 
+        if (!item.nameEn || !item.displayAbbr || !item.city) continue;
+
         const createdTeam = await prisma.team.create({
           data: {
             identifier: teamIdentifier,
@@ -43,12 +45,16 @@ export default async function getBasketball() {
           },
         });
 
+        if (!payload.players || payload.players.length <= 0) continue;
+
         const players = [] as Prisma.PlayerCreateManyInput[];
         for (const p of payload.players) {
           const player = p.profile;
           const position = player.position;
           const lastName = player.lastNameEn;
           const firstName = player.firstNameEn;
+
+          if (!player.position) continue;
 
           players.push({
             identifier:
@@ -72,7 +78,7 @@ export default async function getBasketball() {
         });
       }
     } catch (e) {
-      console.error(e);
+      console.error(`Basketball: ${e}`);
     }
   }
 

@@ -1,18 +1,3 @@
-declare type NHLPlayerResult = {
-  person: {
-    id: string;
-    fullName: string;
-    link: string;
-  };
-  jerseyNumber: string;
-  position: {
-    code: string;
-    name: string;
-    type: string;
-    abbreviation: string;
-  };
-};
-
 declare type NHLTeamResult = {
   teams: [
     {
@@ -34,7 +19,22 @@ declare type NHLTeamResult = {
       locationName: string;
       firstYearOfPlay: string;
       roster: {
-        roster: NHLPlayerResult[];
+        roster: [
+          {
+            person: {
+              id: string;
+              fullName: string;
+              link: string;
+            };
+            jerseyNumber: string;
+            position: {
+              code: string;
+              name: string;
+              type: string;
+              abbreviation: string;
+            };
+          }
+        ];
       };
       shortName: string;
       officialSiteUrl: string;

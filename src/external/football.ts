@@ -19,6 +19,14 @@ export default async function getFootball() {
       const teamIdentifier =
         `${item.id}-${league.name}-${item.slug}`.toLowerCase();
 
+      if (
+        !item.name ||
+        !item.location ||
+        !item.abbreviation ||
+        !item.shortDisplayName
+      )
+        continue;
+
       const createdTeam = await prisma.team.create({
         data: {
           identifier: teamIdentifier,
@@ -31,20 +39,30 @@ export default async function getFootball() {
           source: 'ESPN.com',
         },
       });
+      console.log('createdTeam', createdTeam);
 
       const rosterResult = (await fetchRequest(
         `https://site.api.espn.com/apis/site/v2/sports/football/nfl/teams/${item.id}/roster`
       )) as NFLRosterResult;
 
-      if (rosterResult.athletes) {
-        const players = [] as Prisma.PlayerCreateManyInput[];
-        for (const athlete of rosterResult.athletes) {
-          const person = athlete.item;
-          const position = person.position;
+      if (!rosterResult.athletes || rosterResult.athletes.length <= 0) continue;
+
+      const players = [] as Prisma.PlayerCreateManyInput[];
+      for (const athlete of rosterResult.athletes) {
+        const pos = athlete.position;
+        for (const person of athlete.items) {
+          const position = person.position ?? {
+            abbreviation: pos,
+            name: pos,
+            displayName: pos,
+            id: '-1',
+          };
           const lastName = person.lastName;
           const firstName = person.firstName;
           const playerIdentifier =
             `${person.id}-${league.name}-${person.slug}`.toLowerCase();
+
+          if (!position.displayName) continue;
 
           players.push({
             identifier: playerIdentifier,
@@ -60,14 +78,14 @@ export default async function getFootball() {
             teamId: createdTeam.id,
           });
         }
-
-        await prisma.player.createMany({
-          data: players,
-          skipDuplicates: true,
-        });
       }
+
+      await prisma.player.createMany({
+        data: players,
+        skipDuplicates: true,
+      });
     } catch (e) {
-      console.error(e);
+      // console.error(`Football: ${e}`);
     }
   }
 

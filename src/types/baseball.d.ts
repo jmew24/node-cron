@@ -1,25 +1,25 @@
-declare type MLBPlayerResult = {
-  person: {
-    id: string;
-    fullName: string;
-    link: string;
-  };
-  jerseyNumber: string;
-  position: {
-    code: string;
-    name: string;
-    type: string;
-    abbreviation: string;
-  };
-  status: {
-    code: string;
-    description: string;
-  };
-  parentTeamId: number;
-};
-
 declare type MLBRosterResult = {
-  roster: MLBPlayerResult[];
+  roster: [
+    {
+      person: {
+        id: string;
+        fullName: string;
+        link: string;
+      };
+      jerseyNumber: string;
+      position: {
+        code: string;
+        name: string;
+        type: string;
+        abbreviation: string;
+      };
+      status: {
+        code: string;
+        description: string;
+      };
+      parentTeamId: number;
+    }
+  ];
   link: string;
   teamId: number;
   rosterType: string;
