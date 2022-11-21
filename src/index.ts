@@ -32,8 +32,8 @@ cron.schedule('00 11 * * *', async () => {
   console.log('---------------------');
 });
 
-// Run at 11:30 every day.
-cron.schedule('30 11 * * *', async () => {
+// Run at 11:15 every day.
+cron.schedule('15 11 * * *', async () => {
   if (!hasStarted) return;
 
   console.log('---------------------');
@@ -46,8 +46,8 @@ cron.schedule('30 11 * * *', async () => {
   console.log('---------------------');
 });
 
-// Run at 12:00 every day.
-cron.schedule('00 12 * * *', async () => {
+// Run at 11:30 every day.
+cron.schedule('30 11 * * *', async () => {
   if (!hasStarted) return;
 
   console.log('---------------------');
@@ -60,8 +60,8 @@ cron.schedule('00 12 * * *', async () => {
   console.log('---------------------');
 });
 
-// Run at 12:30 every day.
-cron.schedule('30 12 * * *', async () => {
+// Run at 11:45 every day.
+cron.schedule('45 11 * * *', async () => {
   if (!hasStarted) return;
 
   console.log('---------------------');
@@ -85,6 +85,7 @@ const startUp = async () => {
   await getHockey();
   console.log(`[${new Date()}] Completed NHL Logging`);
 
+  /*
   // Get all MLB players.
   console.log(`[${new Date()}] Running MLB Logging`);
   await getBaseball();
@@ -99,6 +100,7 @@ const startUp = async () => {
   console.log(`[${new Date()}] Running NBA Logging`);
   await getBasketball();
   console.log(`[${new Date()}] Completed NBA Logging`);
+  */
 
   console.log('---------------------');
   console.log(`[${new Date()}] Completed startup...`);
