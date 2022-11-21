@@ -4,12 +4,29 @@ import fetchRequest from '../lib/fetchRequest';
 import prisma from '../lib/prisma';
 
 export default async function getFootball() {
+  const sport = await prisma.sport.upsert({
+    where: {
+      name: 'Football',
+    },
+    update: {
+      name: 'Football',
+    },
+    create: {
+      name: 'Football',
+    },
+  });
+
   const teamResult = (await fetchRequest(
     `https://site.api.espn.com/apis/site/v2/sports/football/nfl/teams`
   )) as NFLResult;
 
   await prisma.team.deleteMany({
-    where: { sport: 'FOOTBALL', source: 'ESPN.com' },
+    where: {
+      sport: {
+        id: sport.id,
+      },
+      source: 'ESPN.com',
+    },
   });
 
   const league = teamResult.sports[0].leagues[0];
@@ -34,9 +51,9 @@ export default async function getFootball() {
           city: item.location,
           abbreviation: item.abbreviation,
           shortName: item.shortDisplayName,
-          sport: 'FOOTBALL',
           league: league.name,
           source: 'ESPN.com',
+          sportId: sport.id,
         },
       });
 
@@ -72,9 +89,9 @@ export default async function getFootball() {
             number: parseInt(person.jersey || '-1'),
             headshotUrl: `https://a.espncdn.com/i/headshots/nfl/players/full/${person.id}.png`,
             linkUrl: `http://www.espn.com/nfl/player/_/id/${person.id}/${person.slug}`,
-            sport: 'FOOTBALL',
             source: 'ESPN.com',
             teamId: createdTeam.id,
+            sportId: sport.id,
           });
         }
       }

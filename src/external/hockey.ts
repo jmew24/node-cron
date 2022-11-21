@@ -4,12 +4,29 @@ import fetchRequest from '../lib/fetchRequest';
 import prisma from '../lib/prisma';
 
 export default async function getHockey() {
+  const sport = await prisma.sport.upsert({
+    where: {
+      name: 'Hockey',
+    },
+    update: {
+      name: 'Hockey',
+    },
+    create: {
+      name: 'Hockey',
+    },
+  });
+
   const teamResult = (await fetchRequest(
     `https://statsapi.web.nhl.com/api/v1/teams?expand=team.roster`
   )) as NHLTeamResult;
 
   await prisma.team.deleteMany({
-    where: { sport: 'HOCKEY', source: 'NHL.com' },
+    where: {
+      sport: {
+        id: sport.id,
+      },
+      source: 'NHL.com',
+    },
   });
 
   for (const item of teamResult.teams) {
@@ -33,9 +50,9 @@ export default async function getHockey() {
           city: item.locationName,
           abbreviation: item.abbreviation,
           shortName: item.teamName,
-          sport: 'HOCKEY',
           league: league,
           source: 'NHL.com',
+          sportId: sport.id,
         },
       });
 
@@ -63,9 +80,9 @@ export default async function getHockey() {
             .toLowerCase()
             .split(' ')
             .join('_')}`,
-          sport: 'HOCKEY',
           source: 'NHL.com',
           teamId: createdTeam.id,
+          sportId: sport.id,
         });
       }
 

@@ -4,12 +4,29 @@ import fetchRequest from '../lib/fetchRequest';
 import prisma from '../lib/prisma';
 
 export default async function getBaseball() {
+  const sport = await prisma.sport.upsert({
+    where: {
+      name: 'Baseball',
+    },
+    update: {
+      name: 'Baseball',
+    },
+    create: {
+      name: 'Baseball',
+    },
+  });
+
   const teamResult = (await fetchRequest(
     `https://statsapi.mlb.com/api/v1/teams/`
   )) as MLBResult;
 
   await prisma.team.deleteMany({
-    where: { sport: 'BASEBALL', source: 'MLB.com' },
+    where: {
+      sport: {
+        id: sport.id,
+      },
+      source: 'MLB.com',
+    },
   });
 
   for (const item of teamResult.teams) {
@@ -32,9 +49,9 @@ export default async function getBaseball() {
           city: item.locationName,
           abbreviation: item.abbreviation,
           shortName: item.teamName,
-          sport: 'BASEBALL',
           league: item.sport.name,
           source: 'MLB.com',
+          sportId: sport.id,
         },
       });
 
@@ -69,9 +86,9 @@ export default async function getBaseball() {
           headshotUrl: `https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_426,q_auto:best/v1/people/${person.id}/headshot/67/current`,
           linkUrl:
             `https://www.mlb.com/player/${lastName}-${firstName}`.toLocaleLowerCase(),
-          sport: 'BASEBALL',
           source: 'MLB.com',
           teamId: createdTeam.id,
+          sportId: sport.id,
         });
       }
 

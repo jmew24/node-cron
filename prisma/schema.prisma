@@ -9,6 +9,15 @@ datasource db {
   shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
+model Sport {
+  id        String   @id @unique @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+  players   Player[]
+  teams     Team[]
+}
+
 model Team {
   id           String   @id @unique @default(cuid())
   createdAt    DateTime @default(now()) @map("created_at")
@@ -19,8 +28,9 @@ model Team {
   shortName    String   @map("short_name")
   league       String
   identifier   String   @unique
-  sport        String   @default("UNKNOWN")
   source       String   @default("UNKNOWN")
+  sportId      String   @map("sport_id")
+  sport        Sport    @relation(fields: [sportId], references: [id], onDelete: Cascade)
   players      Player[]
 
   @@map("team")
@@ -38,9 +48,10 @@ model Player {
   headshotUrl String   @map("logo_url")
   linkUrl     String   @map("link_url")
   identifier  String   @unique
-  sport       String   @default("UNKNOWN")
   source      String   @default("UNKNOWN")
   number      Int
+  sportId     String   @map("sport_id")
+  sport       Sport    @relation(fields: [sportId], references: [id], onDelete: Cascade)
   team        Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
 
   @@map("player")

@@ -4,12 +4,29 @@ import fetchRequest from '../lib/fetchRequest';
 import prisma from '../lib/prisma';
 
 export default async function getBasketball() {
+  const sport = await prisma.sport.upsert({
+    where: {
+      name: 'Basketball',
+    },
+    update: {
+      name: 'Basketball',
+    },
+    create: {
+      name: 'Basketball',
+    },
+  });
+
   const teamResult = (await fetchRequest(
     `https://ca.global.nba.com/stats2/league/conferenceteamlist.json?locale=en`
   )) as NBAResult;
 
   await prisma.team.deleteMany({
-    where: { sport: 'BASKETBALL', source: 'NBA.com' },
+    where: {
+      sport: {
+        id: sport.id,
+      },
+      source: 'NBA.com',
+    },
   });
 
   const league =
@@ -39,9 +56,9 @@ export default async function getBasketball() {
             city: item.city,
             abbreviation: item.displayAbbr,
             shortName: item.nameEn,
-            sport: 'BASKETBALL',
             league: league,
             source: 'NBA.com',
+            sportId: sport.id,
           },
         });
 
@@ -66,9 +83,9 @@ export default async function getBasketball() {
             number: parseInt(player.jerseyNo || '-1'),
             headshotUrl: `https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/latest/260x190/${player.playerId}.png`,
             linkUrl: `https://ca.global.nba.com/players/#!/${player.code}`,
-            sport: 'BASKETBALL',
             source: 'NBA.com',
             teamId: createdTeam.id,
+            sportId: sport.id,
           });
         }
 
