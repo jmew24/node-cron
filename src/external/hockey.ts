@@ -79,7 +79,7 @@ export default async function getHockey() {
           linkUrl: `https://www.nhl.com/player/${person.fullName
             .toLowerCase()
             .split(' ')
-            .join('_')}-${person.id}`,
+            .join('-')}-${person.id}`,
           source: 'NHL.com',
           teamId: createdTeam.id,
           sportId: sport.id,
