@@ -17,7 +17,13 @@ export default async function getBaseball() {
       const teamIdentifier =
         `${item.id}-${item.sport.name}-${item.locationName}-${item.teamName}`.toLowerCase();
 
-      if (!item.name || !item.teamName || !item.locationName) continue;
+      if (
+        !item.name ||
+        !item.locationName ||
+        !item.abbreviation ||
+        !item.teamName
+      )
+        continue;
 
       const createdTeam = await prisma.team.create({
         data: {
@@ -41,7 +47,12 @@ export default async function getBaseball() {
       const roster = rosterResult.roster;
       const players = [] as Prisma.PlayerCreateManyInput[];
       for (const rosterItem of roster) {
-        if (!rosterItem.person || !rosterItem.position) continue;
+        if (
+          !rosterItem.person ||
+          !rosterItem.position ||
+          !rosterItem.person.fullName
+        )
+          continue;
         const person = rosterItem.person;
         const position = rosterItem.position;
         const lastName = person.fullName.split(' ')[1] ?? person.fullName;

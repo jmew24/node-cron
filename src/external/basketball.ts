@@ -30,7 +30,7 @@ export default async function getBasketball() {
         const teamIdentifier =
           `${item.id}-${item.cityEn}-${item.nameEn}`.toLowerCase();
 
-        if (!item.nameEn || !item.displayAbbr || !item.city) continue;
+        if (!item.city || !item.nameEn || !item.nameEn) continue;
 
         const createdTeam = await prisma.team.create({
           data: {

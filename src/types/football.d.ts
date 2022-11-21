@@ -8,14 +8,6 @@ declare type NFLRosterResult = {
           id: string;
           firstName: string;
           lastName: string;
-          links: [
-            {
-              href: string;
-            }
-          ];
-          headshot: {
-            href: string;
-          };
           slug: string;
           jersey: string;
           position: {

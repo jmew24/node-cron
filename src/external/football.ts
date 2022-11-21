@@ -39,7 +39,6 @@ export default async function getFootball() {
           source: 'ESPN.com',
         },
       });
-      console.log('createdTeam', createdTeam);
 
       const rosterResult = (await fetchRequest(
         `https://site.api.espn.com/apis/site/v2/sports/football/nfl/teams/${item.id}/roster`
@@ -71,8 +70,8 @@ export default async function getFootball() {
             fullName: `${firstName} ${lastName}`,
             position: position.displayName,
             number: parseInt(person.jersey || '-1'),
-            headshotUrl: person.headshot.href,
-            linkUrl: person.links[0].href,
+            headshotUrl: `https://a.espncdn.com/i/headshots/nfl/players/full/${person.id}.png`,
+            linkUrl: `http://www.espn.com/nfl/player/_/id/${person.id}/${person.slug}`,
             sport: 'FOOTBALL',
             source: 'ESPN.com',
             teamId: createdTeam.id,

@@ -18,7 +18,13 @@ export default async function getHockey() {
       const teamIdentifier =
         `${item.id}-${league}-${item.locationName}-${item.teamName}`.toLowerCase();
 
-      if (!item.name || !item.teamName || !item.locationName) continue;
+      if (
+        !item.name ||
+        !item.locationName ||
+        !item.abbreviation ||
+        !item.teamName
+      )
+        continue;
 
       const createdTeam = await prisma.team.create({
         data: {
