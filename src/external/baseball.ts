@@ -24,7 +24,7 @@ export default async function getBaseball() {
           identifier: teamIdentifier,
           fullName: item.name,
           city: item.locationName,
-          abbreviation: item.abbreviation ?? item.teamCode.toUpperCase(),
+          abbreviation: item.abbreviation,
           shortName: item.teamName,
           sport: 'BASEBALL',
           league: item.sport.name,
@@ -38,27 +38,26 @@ export default async function getBaseball() {
 
       if (!rosterResult.roster || rosterResult.roster.length <= 0) continue;
 
+      const roster = rosterResult.roster;
       const players = [] as Prisma.PlayerCreateManyInput[];
-      for (const rosterItem of rosterResult.roster) {
+      for (const rosterItem of roster) {
+        if (!rosterItem.person || !rosterItem.position) continue;
         const person = rosterItem.person;
         const position = rosterItem.position;
         const lastName = person.fullName.split(' ')[1] ?? person.fullName;
         const firstName = person.fullName.split(' ')[0] ?? person.fullName;
 
-        if (!position) continue;
-
         players.push({
           identifier:
             `${person.id}-${item.sport.name}-${firstName}-${lastName}`.toLowerCase(),
-          lastName: lastName,
           firstName: firstName,
+          lastName: lastName,
           fullName: person.fullName,
           position: position.abbreviation,
           number: parseInt(rosterItem.jerseyNumber || '-1'),
           headshotUrl: `https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_426,q_auto:best/v1/people/${person.id}/headshot/67/current`,
-          linkUrl: `https://www.mlb.com/player/${lastName.toLowerCase()}-${firstName.toLowerCase()}-${
-            person.id
-          }`,
+          linkUrl:
+            `https://www.mlb.com/player/${lastName}-${firstName}`.toLocaleLowerCase(),
           sport: 'BASEBALL',
           source: 'MLB.com',
           teamId: createdTeam.id,
@@ -70,7 +69,8 @@ export default async function getBaseball() {
         skipDuplicates: true,
       });
     } catch (e) {
-      console.error(`Baseball: ${e}`);
+      console.log('Baseball Error');
+      console.error(e);
     }
   }
 

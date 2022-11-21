@@ -1,5 +1,5 @@
 declare type MLBRosterResult = {
-  roster: [
+  roster?: [
     {
       person: {
         id: string;
