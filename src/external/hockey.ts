@@ -68,7 +68,8 @@ export default async function getHockey() {
         skipDuplicates: true,
       });
     } catch (e) {
-      console.error(`Hockey: ${e}`);
+      console.log('Hockey Error');
+      console.error(e);
     }
   }
 

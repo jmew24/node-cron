@@ -85,7 +85,8 @@ export default async function getFootball() {
         skipDuplicates: true,
       });
     } catch (e) {
-      // console.error(`Football: ${e}`);
+      console.log('Football Error');
+      console.error(e);
     }
   }
 

@@ -78,7 +78,8 @@ export default async function getBasketball() {
         });
       }
     } catch (e) {
-      console.error(`Basketball: ${e}`);
+      console.log('Basketball Error');
+      console.error(e);
     }
   }
 
