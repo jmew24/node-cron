@@ -85,7 +85,7 @@ export default async function getBaseball() {
           number: parseInt(rosterItem.jerseyNumber || '-1'),
           headshotUrl: `https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_426,q_auto:best/v1/people/${person.id}/headshot/67/current`,
           linkUrl:
-            `https://www.mlb.com/player/${lastName}-${firstName}`.toLocaleLowerCase(),
+            `https://www.mlb.com/player/${firstName}-${lastName}-${person.id}`.toLocaleLowerCase(),
           source: 'MLB.com',
           teamId: createdTeam.id,
           sportId: sport.id,
