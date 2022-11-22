@@ -85,6 +85,7 @@ const startUp = async () => {
   await getHockey();
   console.log(`[${new Date()}] Completed NHL Logging`);
 
+  /**/
   // Get all MLB players.
   console.log(`[${new Date()}] Running MLB Logging`);
   await getBaseball();
@@ -99,6 +100,7 @@ const startUp = async () => {
   console.log(`[${new Date()}] Running NBA Logging`);
   await getBasketball();
   console.log(`[${new Date()}] Completed NBA Logging`);
+  /**/
 
   console.log('---------------------');
   console.log(`[${new Date()}] Completed startup...`);
