@@ -68,10 +68,38 @@ cron.schedule('45 11 * * *', async () => {
   console.log('---------------------');
   console.log(`[${new Date()}] Running Cron Job for NBA Logging`);
 
-  // Get all NFL players.
+  // Get all NBA players.
   await getBasketball();
 
   console.log(`[${new Date()}] Completed Cron Job for NBA Logging`);
+  console.log('---------------------');
+});
+
+// Run at 12:00 every day.
+cron.schedule('00 12 * * *', async () => {
+  if (!hasStarted) return;
+
+  console.log('---------------------');
+  console.log(`[${new Date()}] Running Cron Job for NBA Logging`);
+
+  // Get all WNBA players.
+  await getWNBA();
+
+  console.log(`[${new Date()}] Completed Cron Job for NBA Logging`);
+  console.log('---------------------');
+});
+
+// Run at 12:15 every day.
+cron.schedule('15 12 * * *', async () => {
+  if (!hasStarted) return;
+
+  console.log('---------------------');
+  console.log(`[${new Date()}] Running Cron Job for MLS Logging`);
+
+  // Get all MLS players.
+  await getMLS();
+
+  console.log(`[${new Date()}] Completed Cron Job for MLS Logging`);
   console.log('---------------------');
 });
 
