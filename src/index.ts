@@ -5,6 +5,7 @@ import getHockey from './external/hockey';
 import getBaseball from './external/baseball';
 import getFootball from './external/football';
 import getBasketball, { getWNBA } from './external/basketball';
+import getMLS from './external/mls';
 
 let hasStarted = false;
 
@@ -108,11 +109,18 @@ const startUp = async () => {
   console.log(`[${new Date()}] Completed NBA Logging`);
   /**/
 
-  /**/
+  /** */
   // Get all WNBA players.
   console.log(`[${new Date()}] Running WNBA Logging`);
   await getWNBA();
   console.log(`[${new Date()}] Completed WNBA Logging`);
+  /**/
+
+  /** */
+  // Get all MLS players.
+  console.log(`[${new Date()}] Running MLS Logging`);
+  await getMLS();
+  console.log(`[${new Date()}] Completed MLS Logging`);
   /**/
 
   console.log('---------------------');
