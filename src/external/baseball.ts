@@ -92,6 +92,7 @@ export default async function getBaseball() {
         });
       }
 
+      console.info(createdTeam.fullName, players.length);
       await prisma.player.createMany({
         data: players,
         skipDuplicates: true,

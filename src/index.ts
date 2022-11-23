@@ -4,7 +4,7 @@ import prisma from './lib/prisma';
 import getHockey from './external/hockey';
 import getBaseball from './external/baseball';
 import getFootball from './external/football';
-import getBasketball from './external/basketball';
+import getBasketball, { getWNBA } from './external/basketball';
 
 let hasStarted = false;
 
@@ -80,26 +80,39 @@ const startUp = async () => {
   console.log(`[${new Date()}] Starting cron job scheduler...`);
   console.log('---------------------');
 
+  /** */
   // Get all NHL players.
   console.log(`[${new Date()}] Running NHL Logging`);
   await getHockey();
   console.log(`[${new Date()}] Completed NHL Logging`);
-
   /**/
+
+  /** */
   // Get all MLB players.
   console.log(`[${new Date()}] Running MLB Logging`);
   await getBaseball();
   console.log(`[${new Date()}] Completed MLB Logging`);
+  /**/
 
+  /** */
   // Get all NFL players.
   console.log(`[${new Date()}] Running NFL Logging`);
   await getFootball();
   console.log(`[${new Date()}] Completed NFL Logging`);
+  /**/
 
+  /** */
   // Get all NBA players.
   console.log(`[${new Date()}] Running NBA Logging`);
   await getBasketball();
   console.log(`[${new Date()}] Completed NBA Logging`);
+  /**/
+
+  /**/
+  // Get all WNBA players.
+  console.log(`[${new Date()}] Running WNBA Logging`);
+  await getWNBA();
+  console.log(`[${new Date()}] Completed WNBA Logging`);
   /**/
 
   console.log('---------------------');

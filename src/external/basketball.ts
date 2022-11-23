@@ -3,6 +3,129 @@ import { Prisma } from '@prisma/client';
 import fetchRequest from '../lib/fetchRequest';
 import prisma from '../lib/prisma';
 
+export const getWNBA = async () => {
+  const sport = await prisma.sport.upsert({
+    where: {
+      name: 'Basketball',
+    },
+    update: {
+      name: 'Basketball',
+    },
+    create: {
+      name: 'Basketball',
+    },
+  });
+
+  const teamResult = (await fetchRequest(
+    `https://www.wnba.com/wp-json/api/v1/teams.json`
+  )) as WNBAResult;
+
+  if (!teamResult.sports || teamResult.sports.length <= 0) return true;
+  if (
+    !teamResult.sports[0] ||
+    !teamResult.sports[0].leagues ||
+    teamResult.sports[0].leagues.length <= 0
+  )
+    return true;
+  if (
+    !teamResult.sports[0].leagues[0] ||
+    !teamResult.sports[0].leagues[0].teams ||
+    teamResult.sports[0].leagues[0].teams.length <= 0
+  )
+    return true;
+
+  await prisma.team.deleteMany({
+    where: {
+      sport: {
+        id: sport.id,
+      },
+      source: 'ESPN.com',
+    },
+  });
+
+  await prisma.team.deleteMany({
+    where: {
+      sport: {
+        id: sport.id,
+      },
+      source: 'WNBA.com',
+    },
+  });
+
+  const league =
+    teamResult.sports[0]?.leagues[0]?.name ||
+    `Women's National Basketball Association`;
+  for (const t of teamResult.sports[0]?.leagues[0]?.teams) {
+    try {
+      const item = t.team;
+      const teamIdentifier = `${item.id}-${league}-${item.slug}`.toLowerCase();
+
+      if (
+        !item.displayName ||
+        !item.location ||
+        !item.abbreviation ||
+        !item.shortDisplayName
+      )
+        continue;
+
+      const createdTeam = await prisma.team.create({
+        data: {
+          identifier: teamIdentifier,
+          fullName: item.displayName,
+          city: item.location,
+          abbreviation: item.abbreviation,
+          shortName: item.shortDisplayName,
+          league: league,
+          source: 'ESPN.com',
+          sportId: sport.id,
+        },
+      });
+
+      const rosterResult = (await fetchRequest(
+        `https://site.api.espn.com/apis/site/v2/sports/basketball/wnba/teams/${item.id}/roster`
+      )) as WNBARosterResult;
+
+      if (!rosterResult.athletes || rosterResult.athletes.length <= 0) continue;
+      if (rosterResult.status && rosterResult.status != 'success') continue;
+
+      const players = [] as Prisma.PlayerCreateManyInput[];
+      for (const athlete of rosterResult.athletes) {
+        const lastName = athlete.lastName;
+        const firstName = athlete.firstName;
+        const playerIdentifier =
+          `${athlete.id}-${league}-${athlete.slug}`.toLowerCase();
+
+        if (!athlete.position.displayName) continue;
+
+        players.push({
+          identifier: playerIdentifier,
+          firstName: firstName,
+          lastName: lastName,
+          fullName: `${firstName} ${lastName}`,
+          position: athlete.position.displayName,
+          number: parseInt(athlete.jersey || '-1'),
+          headshotUrl: `https://a.espncdn.com/i/headshots/wnba/players/full/${athlete.id}.png`,
+          linkUrl: `http://www.espn.com/wnba/player/_/id/${athlete.id}/${athlete.slug}`,
+          source: 'ESPN.com',
+          teamId: createdTeam.id,
+          sportId: sport.id,
+        });
+      }
+
+      console.info(createdTeam.fullName, players.length);
+      await prisma.player.createMany({
+        data: players,
+        skipDuplicates: true,
+      });
+    } catch (e) {
+      console.log('Basketball [WNBA] Error');
+      console.error(e);
+    }
+  }
+
+  return true;
+};
+
 export default async function getBasketball() {
   const sport = await prisma.sport.upsert({
     where: {
@@ -89,6 +212,7 @@ export default async function getBasketball() {
           });
         }
 
+        console.info(createdTeam.fullName, players.length);
         await prisma.player.createMany({
           data: players,
           skipDuplicates: true,

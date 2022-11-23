@@ -86,6 +86,7 @@ export default async function getHockey() {
         });
       }
 
+      console.info(createdTeam.fullName, players.length);
       await prisma.player.createMany({
         data: players,
         skipDuplicates: true,

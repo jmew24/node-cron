@@ -53,3 +53,59 @@ declare type NBAResult = {
     ];
   };
 };
+
+declare type WNBAResult = {
+  sports: [
+    {
+      id: string;
+      uid: string;
+      name: string;
+      slug: string;
+      leagues: [
+        {
+          id: string;
+          uid: string;
+          name: string;
+          abbreviation: string;
+          shortName: string;
+          slug: string;
+          teams: [
+            {
+              team: {
+                id: string;
+                slug: string;
+                abbreviation: string;
+                displayName: string;
+                shortDisplayName: string;
+                name: string;
+                nickname: string;
+                location: string;
+              };
+            }
+          ];
+        }
+      ];
+    }
+  ];
+};
+
+declare type WNBARosterResult = {
+  status: string;
+  coach: [];
+  athletes: [
+    {
+      id: string;
+      fullName: string;
+      firstName: string;
+      lastName: string;
+      slug: string;
+      jersey: string;
+      position: {
+        id: string;
+        name: string;
+        displayName: string;
+        abbreviation: string;
+      };
+    }
+  ];
+};

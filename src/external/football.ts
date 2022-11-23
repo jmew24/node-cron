@@ -37,7 +37,7 @@ export default async function getFootball() {
         `${item.id}-${league.name}-${item.slug}`.toLowerCase();
 
       if (
-        !item.name ||
+        !item.displayName ||
         !item.location ||
         !item.abbreviation ||
         !item.shortDisplayName
@@ -47,7 +47,7 @@ export default async function getFootball() {
       const createdTeam = await prisma.team.create({
         data: {
           identifier: teamIdentifier,
-          fullName: item.name,
+          fullName: item.displayName,
           city: item.location,
           abbreviation: item.abbreviation,
           shortName: item.shortDisplayName,
@@ -96,6 +96,7 @@ export default async function getFootball() {
         }
       }
 
+      console.info(createdTeam.fullName, players.length);
       await prisma.player.createMany({
         data: players,
         skipDuplicates: true,
