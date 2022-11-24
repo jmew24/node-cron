@@ -136,24 +136,6 @@ cron.schedule(
     if (!hasStarted) return;
 
     console.log('---------------------');
-    console.log(`[${new Date()}] Running UEFA Champions League Logging`);
-
-    // Get all UEFA Champions League players.
-    await getESPNSoccer('uefa.champions', 'UEFA Champions League');
-
-    console.log(`[${new Date()}] Completed UEFA Champions League Logging`);
-    console.log('---------------------');
-  },
-  { timezone: timeZone }
-);
-
-// Run at 12:45 every day.
-cron.schedule(
-  '45 12 * * *',
-  async () => {
-    if (!hasStarted) return;
-
-    console.log('---------------------');
     console.log(`[${new Date()}] Running English Premier League Logging`);
 
     // Get all Premier League players.
@@ -165,9 +147,9 @@ cron.schedule(
   { timezone: timeZone }
 );
 
-// Run at 13:00 every day.
+// Run at 12:45 every day.
 cron.schedule(
-  '00 13 * * *',
+  '45 12 * * *',
   async () => {
     if (!hasStarted) return;
 
@@ -187,9 +169,9 @@ cron.schedule(
   { timezone: timeZone }
 );
 
-// Run at 13:15 every day.
+// Run at 13:00 every day.
 cron.schedule(
-  '15 13 * * *',
+  '00 13 * * *',
   async () => {
     if (!hasStarted) return;
 
@@ -207,9 +189,9 @@ cron.schedule(
   { timezone: timeZone }
 );
 
-// Run at 13:30 every day.
+// Run at 13:15 every day.
 cron.schedule(
-  '30 13 * * *',
+  '15 13 * * *',
   async () => {
     if (!hasStarted) return;
 
@@ -271,13 +253,6 @@ const startUp = async () => {
   console.log(`[${new Date()}] Running MLS Logging`);
   await getMLS();
   console.log(`[${new Date()}] Completed MLS Logging`);
-  /**/
-
-  /** */
-  // Get all UEFA Champions League players.
-  console.log(`[${new Date()}] Running UEFA Champions League Logging`);
-  await getESPNSoccer('uefa.champions', 'UEFA Champions League');
-  console.log(`[${new Date()}] Completed UEFA Champions League Logging`);
   /**/
 
   /** */
