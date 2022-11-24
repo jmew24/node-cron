@@ -20,22 +20,32 @@ export default async function getMLS() {
     `https://sportapi.mlssoccer.com/api/clubs/2022/98?culture=en-us`
   )) as MLSResult;
 
-  await prisma.team.deleteMany({
-    where: {
-      sport: {
-        id: sport.id,
-      },
-      source: 'MLSsoccer.com',
-    },
-  });
-
-  const sportName = 'Major League Soccer';
+  const deletedTeams = [] as string[];
+  const leagueName = 'Major League Soccer';
   for (const item of teamResult) {
     try {
+      const source = 'MLSsoccer.com';
       const teamIdentifier =
-        `${item.optaId}-${sportName}-${item.slug}`.toLowerCase();
+        `${item.optaId}-${leagueName}-${item.slug}`.toLowerCase();
 
       if (!item.fullName || !item.shortName || !item.abbreviation) continue;
+
+      if (
+        !deletedTeams.find(
+          (dt) => dt === `${source}-${leagueName.toLowerCase()}`
+        )
+      ) {
+        await prisma.team.deleteMany({
+          where: {
+            sport: {
+              id: sport.id,
+            },
+            league: leagueName,
+            source: source,
+          },
+        });
+        deletedTeams.push(`${source}-${leagueName.toLowerCase()}`);
+      }
 
       const createdTeam = await prisma.team.create({
         data: {
@@ -44,8 +54,8 @@ export default async function getMLS() {
           city: item.shortName,
           abbreviation: item.abbreviation,
           shortName: item.shortName,
-          league: sportName,
-          source: 'MLS.com',
+          league: leagueName,
+          source: source,
           sportId: sport.id,
         },
       });
@@ -72,7 +82,7 @@ export default async function getMLS() {
 
         players.push({
           identifier:
-            `${person.id}-${sportName}-${firstName}-${lastName}`.toLowerCase(),
+            `${person.id}-${leagueName}-${firstName}-${lastName}`.toLowerCase(),
           //updatedAt: new Date(person.updated),
           firstName: firstName,
           lastName: lastName,

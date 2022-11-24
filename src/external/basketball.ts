@@ -34,29 +34,13 @@ export const getWNBA = async () => {
   )
     return true;
 
-  await prisma.team.deleteMany({
-    where: {
-      sport: {
-        id: sport.id,
-      },
-      source: 'ESPN.com',
-    },
-  });
-
-  await prisma.team.deleteMany({
-    where: {
-      sport: {
-        id: sport.id,
-      },
-      source: 'WNBA.com',
-    },
-  });
-
+  const deletedTeams = [] as string[];
   const league =
     teamResult.sports[0]?.leagues[0]?.name ||
     `Women's National Basketball Association`;
   for (const t of teamResult.sports[0]?.leagues[0]?.teams) {
     try {
+      const source = 'ESPN.com';
       const item = t.team;
       const teamIdentifier = `${item.id}-${league}-${item.slug}`.toLowerCase();
 
@@ -68,6 +52,21 @@ export const getWNBA = async () => {
       )
         continue;
 
+      if (
+        !deletedTeams.find((dt) => dt === `${source}-${league.toLowerCase()}`)
+      ) {
+        await prisma.team.deleteMany({
+          where: {
+            sport: {
+              id: sport.id,
+            },
+            league: league,
+            source: source,
+          },
+        });
+        deletedTeams.push(`${source}-${league.toLowerCase()}`);
+      }
+
       const createdTeam = await prisma.team.create({
         data: {
           identifier: teamIdentifier,
@@ -76,7 +75,7 @@ export const getWNBA = async () => {
           abbreviation: item.abbreviation,
           shortName: item.shortDisplayName,
           league: league,
-          source: 'ESPN.com',
+          source: source,
           sportId: sport.id,
         },
       });
@@ -143,15 +142,7 @@ export default async function getBasketball() {
     `https://ca.global.nba.com/stats2/league/conferenceteamlist.json?locale=en`
   )) as NBAResult;
 
-  await prisma.team.deleteMany({
-    where: {
-      sport: {
-        id: sport.id,
-      },
-      source: 'NBA.com',
-    },
-  });
-
+  const deletedTeams = [] as string[];
   const league =
     teamResult.payload.league.name === 'NBA'
       ? 'National Basketball Association'
@@ -159,6 +150,7 @@ export default async function getBasketball() {
   for (const conference of teamResult.payload.listGroups) {
     try {
       for (const t of conference.teams) {
+        const source = 'NBA.com';
         const teamRosterResult = (await fetchRequest(
           `https://ca.global.nba.com/stats2/team/roster.json?locale=en&teamCode=${t.profile.code}`
         )) as NBATeamRosterResult;
@@ -172,6 +164,21 @@ export default async function getBasketball() {
 
         if (!item.city || !item.nameEn || !item.nameEn) continue;
 
+        if (
+          !deletedTeams.find((dt) => dt === `${source}-${league.toLowerCase()}`)
+        ) {
+          await prisma.team.deleteMany({
+            where: {
+              sport: {
+                id: sport.id,
+              },
+              league: league,
+              source: source,
+            },
+          });
+          deletedTeams.push(`${source}-${league.toLowerCase()}`);
+        }
+
         const createdTeam = await prisma.team.create({
           data: {
             identifier: teamIdentifier,
@@ -180,7 +187,7 @@ export default async function getBasketball() {
             abbreviation: item.displayAbbr,
             shortName: item.nameEn,
             league: league,
-            source: 'NBA.com',
+            source: source,
             sportId: sport.id,
           },
         });

@@ -20,17 +20,10 @@ export default async function getBaseball() {
     `https://statsapi.mlb.com/api/v1/teams/`
   )) as MLBResult;
 
-  await prisma.team.deleteMany({
-    where: {
-      sport: {
-        id: sport.id,
-      },
-      source: 'MLB.com',
-    },
-  });
-
+  const deletedTeams = [] as string[];
   for (const item of teamResult.teams) {
     try {
+      const source = 'MLB.com';
       const teamIdentifier =
         `${item.id}-${item.sport.name}-${item.locationName}-${item.teamName}`.toLowerCase();
 
@@ -42,6 +35,23 @@ export default async function getBaseball() {
       )
         continue;
 
+      if (
+        !deletedTeams.find(
+          (dt) => dt === `${source}-${item.sport.name.toLowerCase()}`
+        )
+      ) {
+        await prisma.team.deleteMany({
+          where: {
+            sport: {
+              id: sport.id,
+            },
+            league: item.sport.name,
+            source: source,
+          },
+        });
+        deletedTeams.push(`${source}-${item.sport.name.toLowerCase()}`);
+      }
+
       const createdTeam = await prisma.team.create({
         data: {
           identifier: teamIdentifier,
@@ -50,7 +60,7 @@ export default async function getBaseball() {
           abbreviation: item.abbreviation,
           shortName: item.teamName,
           league: item.sport.name,
-          source: 'MLB.com',
+          source: source,
           sportId: sport.id,
         },
       });

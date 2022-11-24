@@ -20,18 +20,11 @@ export default async function getFootball() {
     `https://site.api.espn.com/apis/site/v2/sports/football/nfl/teams`
   )) as NFLResult;
 
-  await prisma.team.deleteMany({
-    where: {
-      sport: {
-        id: sport.id,
-      },
-      source: 'ESPN.com',
-    },
-  });
-
+  const deletedTeams = [] as string[];
   const league = teamResult.sports[0].leagues[0];
   for (const t of league.teams) {
     try {
+      const source = 'ESPN.com';
       const item = t.team;
       const teamIdentifier =
         `${item.id}-${league.name}-${item.slug}`.toLowerCase();
@@ -44,6 +37,23 @@ export default async function getFootball() {
       )
         continue;
 
+      if (
+        !deletedTeams.find(
+          (dt) => dt === `${source}-${league.name.toLowerCase()}`
+        )
+      ) {
+        await prisma.team.deleteMany({
+          where: {
+            sport: {
+              id: sport.id,
+            },
+            league: league.name,
+            source: source,
+          },
+        });
+        deletedTeams.push(`${source}-${league.name.toLowerCase()}`);
+      }
+
       const createdTeam = await prisma.team.create({
         data: {
           identifier: teamIdentifier,
@@ -52,7 +62,7 @@ export default async function getFootball() {
           abbreviation: item.abbreviation,
           shortName: item.shortDisplayName,
           league: league.name,
-          source: 'ESPN.com',
+          source: source,
           sportId: sport.id,
         },
       });

@@ -20,17 +20,10 @@ export default async function getHockey() {
     `https://statsapi.web.nhl.com/api/v1/teams?expand=team.roster`
   )) as NHLTeamResult;
 
-  await prisma.team.deleteMany({
-    where: {
-      sport: {
-        id: sport.id,
-      },
-      source: 'NHL.com',
-    },
-  });
-
+  const deletedTeams = [] as string[];
   for (const item of teamResult.teams) {
     try {
+      const source = 'NHL.com';
       const league = 'National Hockey League';
       const teamIdentifier =
         `${item.id}-${league}-${item.locationName}-${item.teamName}`.toLowerCase();
@@ -43,6 +36,21 @@ export default async function getHockey() {
       )
         continue;
 
+      if (
+        !deletedTeams.find((dt) => dt === `${source}-${league.toLowerCase()}`)
+      ) {
+        await prisma.team.deleteMany({
+          where: {
+            sport: {
+              id: sport.id,
+            },
+            league: league,
+            source: source,
+          },
+        });
+        deletedTeams.push(`${source}-${league.toLowerCase()}`);
+      }
+
       const createdTeam = await prisma.team.create({
         data: {
           identifier: teamIdentifier,
@@ -51,7 +59,7 @@ export default async function getHockey() {
           abbreviation: item.abbreviation,
           shortName: item.teamName,
           league: league,
-          source: 'NHL.com',
+          source: source,
           sportId: sport.id,
         },
       });
