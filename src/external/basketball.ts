@@ -17,7 +17,8 @@ export const getWNBA = async () => {
   });
 
   const teamResult = (await fetchRequest(
-    `https://www.wnba.com/wp-json/api/v1/teams.json`
+    //`https://www.wnba.com/wp-json/api/v1/teams.json`
+    `https://site.api.espn.com/apis/site/v2/sports/basketball/wnba/teams`
   )) as WNBAResult;
 
   if (!teamResult.sports || teamResult.sports.length <= 0) return true;
@@ -49,8 +50,10 @@ export const getWNBA = async () => {
         !item.location ||
         !item.abbreviation ||
         !item.shortDisplayName
-      )
+      ) {
+        console.log('WNBA missing team items', item);
         continue;
+      }
 
       if (
         !deletedTeams.find((dt) => dt === `${source}-${league.toLowerCase()}`)
@@ -81,6 +84,7 @@ export const getWNBA = async () => {
       });
 
       const rosterResult = (await fetchRequest(
+        // https://data.wnba.com/data/5s/v2015/json/mobile_teams/wnba/2022/teams/{item.abbreviation.toLowerCase()}_roster.json
         `https://site.api.espn.com/apis/site/v2/sports/basketball/wnba/teams/${item.id}/roster`
       )) as WNBARosterResult;
 
@@ -111,11 +115,11 @@ export const getWNBA = async () => {
         });
       }
 
-      console.info(createdTeam.fullName, players.length);
       await prisma.player.createMany({
         data: players,
         skipDuplicates: true,
       });
+      console.info(createdTeam.fullName, players.length);
     } catch (e) {
       console.log('Basketball [WNBA] Error');
       console.error(e);
