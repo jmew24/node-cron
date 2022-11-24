@@ -7,6 +7,7 @@ import getFootball from './external/football';
 import getBasketball, { getWNBA } from './external/basketball';
 import getMLS from './external/mls';
 import getPremierLeague from './external/premierLeague';
+import getGermanBundesliga from './external/germanBundesliga';
 
 let hasStarted = false;
 const timeZone = 'America/Toronto';
@@ -36,9 +37,7 @@ cron.schedule(
     console.log(`[${new Date()}] Completed Cron Job for NHL Logging`);
     console.log('---------------------');
   },
-  {
-    timezone: timeZone,
-  }
+  { timezone: timeZone }
 );
 
 // Run at 11:15 every day.
@@ -56,9 +55,7 @@ cron.schedule(
     console.log(`[${new Date()}] Completed Cron Job for MLB Logging`);
     console.log('---------------------');
   },
-  {
-    timezone: timeZone,
-  }
+  { timezone: timeZone }
 );
 
 // Run at 11:30 every day.
@@ -76,9 +73,7 @@ cron.schedule(
     console.log(`[${new Date()}] Completed Cron Job for NFL Logging`);
     console.log('---------------------');
   },
-  {
-    timezone: timeZone,
-  }
+  { timezone: timeZone }
 );
 
 // Run at 11:45 every day.
@@ -96,9 +91,7 @@ cron.schedule(
     console.log(`[${new Date()}] Completed Cron Job for NBA Logging`);
     console.log('---------------------');
   },
-  {
-    timezone: timeZone,
-  }
+  { timezone: timeZone }
 );
 
 // Run at 12:00 every day.
@@ -116,9 +109,7 @@ cron.schedule(
     console.log(`[${new Date()}] Completed Cron Job for NBA Logging`);
     console.log('---------------------');
   },
-  {
-    timezone: timeZone,
-  }
+  { timezone: timeZone }
 );
 
 // Run at 12:15 every day.
@@ -136,9 +127,7 @@ cron.schedule(
     console.log(`[${new Date()}] Completed Cron Job for MLS Logging`);
     console.log('---------------------');
   },
-  {
-    timezone: timeZone,
-  }
+  { timezone: timeZone }
 );
 
 // Run at 12:30 every day.
@@ -158,9 +147,29 @@ cron.schedule(
     );
     console.log('---------------------');
   },
-  {
-    timezone: timeZone,
-  }
+  { timezone: timeZone }
+);
+
+// Run at 12:45 every day.
+cron.schedule(
+  '45 12 * * *',
+  async () => {
+    if (!hasStarted) return;
+
+    console.log('---------------------');
+    console.log(
+      `[${new Date()}] Running Cron Job for German Bundesliga Logging`
+    );
+
+    // Get all German Bundesliga players.
+    await getGermanBundesliga();
+
+    console.log(
+      `[${new Date()}] Completed Cron Job for German Bundesliga Logging`
+    );
+    console.log('---------------------');
+  },
+  { timezone: timeZone }
 );
 
 const startUp = async () => {
@@ -216,6 +225,13 @@ const startUp = async () => {
   console.log(`[${new Date()}] Running Premier League Logging`);
   await getPremierLeague();
   console.log(`[${new Date()}] Completed Premier League Logging`);
+  /**/
+
+  /** */
+  // Get all German Bundesliga players.
+  console.log(`[${new Date()}] Running German Bundesliga Logging`);
+  await getGermanBundesliga();
+  console.log(`[${new Date()}] Completed German Bundesliga Logging`);
   /**/
 
   console.log('---------------------');
