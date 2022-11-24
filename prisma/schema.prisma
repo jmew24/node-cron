@@ -47,12 +47,12 @@ model Player {
   fullName    String   @map("full_name")
   position    String
   teamId      String   @map("team_id")
-  headshotUrl String   @map("headshot_url")
   linkUrl     String   @map("link_url")
   identifier  String   @unique
-  number      Int
   source      String   @default("UNKNOWN")
+  number      Int
   sportId     String   @map("sport_id")
+  headshotUrl String   @map("headshot_url")
   sport       Sport    @relation(fields: [sportId], references: [id], onDelete: Cascade)
   team        Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
 
