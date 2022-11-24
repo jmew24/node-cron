@@ -16,6 +16,8 @@ model Sport {
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
   players   Player[]
   teams     Team[]
+
+  @@map("sport")
 }
 
 model Team {
@@ -45,7 +47,7 @@ model Player {
   fullName    String   @map("full_name")
   position    String
   teamId      String   @map("team_id")
-  headshotUrl String   @map("logo_url")
+  headshotUrl String   @map("headshot_url")
   linkUrl     String   @map("link_url")
   identifier  String   @unique
   number      Int
