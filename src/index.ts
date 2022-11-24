@@ -6,8 +6,7 @@ import getBaseball from './external/baseball';
 import getFootball from './external/football';
 import getBasketball, { getWNBA } from './external/basketball';
 import getMLS from './external/mls';
-import getPremierLeague from './external/premierLeague';
-import getGermanBundesliga from './external/germanBundesliga';
+import getESPNSoccer from './external/espnSoccer';
 
 let hasStarted = false;
 const timeZone = 'America/Toronto';
@@ -137,14 +136,12 @@ cron.schedule(
     if (!hasStarted) return;
 
     console.log('---------------------');
-    console.log(`[${new Date()}] Running Cron Job for Premier League Logging`);
+    console.log(`[${new Date()}] Running UEFA Champions League Logging`);
 
-    // Get all Premier League players.
-    await getPremierLeague();
+    // Get all UEFA Champions League players.
+    await getESPNSoccer('uefa.champions', 'UEFA Champions League');
 
-    console.log(
-      `[${new Date()}] Completed Cron Job for Premier League Logging`
-    );
+    console.log(`[${new Date()}] Completed UEFA Champions League Logging`);
     console.log('---------------------');
   },
   { timezone: timeZone }
@@ -157,15 +154,53 @@ cron.schedule(
     if (!hasStarted) return;
 
     console.log('---------------------');
+    console.log(`[${new Date()}] Running English Premier League Logging`);
+
+    // Get all Premier League players.
+    await getESPNSoccer('eng.1', 'English Premier League');
+
+    console.log(`[${new Date()}] Completed English Premier League Logging`);
+    console.log('---------------------');
+  },
+  { timezone: timeZone }
+);
+
+// Run at 13:00 every day.
+cron.schedule(
+  '00 13 * * *',
+  async () => {
+    if (!hasStarted) return;
+
+    console.log('---------------------');
     console.log(
       `[${new Date()}] Running Cron Job for German Bundesliga Logging`
     );
 
     // Get all German Bundesliga players.
-    await getGermanBundesliga();
+    await getESPNSoccer('ger.1', 'German Bundesliga');
 
     console.log(
       `[${new Date()}] Completed Cron Job for German Bundesliga Logging`
+    );
+    console.log('---------------------');
+  },
+  { timezone: timeZone }
+);
+
+// Run at 13:15 every day.
+cron.schedule(
+  '15 13 * * *',
+  async () => {
+    if (!hasStarted) return;
+
+    console.log('---------------------');
+    console.log(`[${new Date()}] Running Cron Job for Spanish LaLiga Logging`);
+
+    // Get all Spanish LaLiga players.
+    await getESPNSoccer('esp.1', 'Spanish LaLiga');
+
+    console.log(
+      `[${new Date()}] Completed Cron Job for Spanish LaLiga Logging`
     );
     console.log('---------------------');
   },
@@ -221,17 +256,31 @@ const startUp = async () => {
   /**/
 
   /** */
+  // Get all UEFA Champions League players.
+  console.log(`[${new Date()}] Running UEFA Champions League Logging`);
+  await getESPNSoccer('uefa.champions', 'UEFA Champions League');
+  console.log(`[${new Date()}] Completed UEFA Champions League Logging`);
+  /**/
+
+  /** */
   // Get all Premier League players.
-  console.log(`[${new Date()}] Running Premier League Logging`);
-  await getPremierLeague();
-  console.log(`[${new Date()}] Completed Premier League Logging`);
+  console.log(`[${new Date()}] Running English Premier League Logging`);
+  await getESPNSoccer('eng.1', 'English Premier League');
+  console.log(`[${new Date()}] Completed English Premier League Logging`);
   /**/
 
   /** */
   // Get all German Bundesliga players.
   console.log(`[${new Date()}] Running German Bundesliga Logging`);
-  await getGermanBundesliga();
+  await getESPNSoccer('ger.1', 'German Bundesliga');
   console.log(`[${new Date()}] Completed German Bundesliga Logging`);
+  /**/
+
+  /** */
+  // Get all Spanish LaLiga players.
+  console.log(`[${new Date()}] Running Spanish LaLiga Logging`);
+  await getESPNSoccer('esp.1', 'Spanish LaLiga');
+  console.log(`[${new Date()}] Completed Spanish LaLiga Logging`);
   /**/
 
   console.log('---------------------');

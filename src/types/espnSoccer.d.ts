@@ -1,4 +1,4 @@
-declare type EPLRosterResult = {
+declare type ESPNSoccerRosterResult = {
   coach: [];
   athletes: [
     {
@@ -11,6 +11,10 @@ declare type EPLRosterResult = {
       displayName: string;
       displayWeight: string;
       slug: string;
+      headshot?: {
+        href: string;
+        alt: string;
+      };
       jersey: string;
       position: {
         id: string;
@@ -23,7 +27,7 @@ declare type EPLRosterResult = {
   ];
 };
 
-declare type EPLResult = {
+declare type ESPNSoccerResult = {
   sports: [
     {
       id: string;

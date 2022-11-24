@@ -3,7 +3,12 @@ import { Prisma } from '@prisma/client';
 import fetchRequest from '../lib/fetchRequest';
 import prisma from '../lib/prisma';
 
-export default async function getPremierLeague() {
+export default async function getESPNSoccer(
+  leagueId: string = '',
+  leagueName: string = 'ESPN Soccer'
+) {
+  if (leagueId.length <= 0) return true;
+
   const sport = await prisma.sport.upsert({
     where: {
       name: 'Soccer',
@@ -17,8 +22,8 @@ export default async function getPremierLeague() {
   });
 
   const teamResult = (await fetchRequest(
-    `http://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/teams`
-  )) as EPLResult;
+    `http://site.api.espn.com/apis/site/v2/sports/soccer/${leagueId}/teams`
+  )) as ESPNSoccerResult;
 
   const deletedTeams = [] as string[];
   const league = teamResult.sports[0].leagues[0];
@@ -68,8 +73,8 @@ export default async function getPremierLeague() {
       });
 
       const rosterResult = (await fetchRequest(
-        `http://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/teams/${item.id}/roster`
-      )) as EPLRosterResult;
+        `http://site.api.espn.com/apis/site/v2/sports/soccer/${leagueId}/teams/${item.id}/roster`
+      )) as ESPNSoccerRosterResult;
 
       if (!rosterResult.athletes || rosterResult.athletes.length <= 0) continue;
 
@@ -107,7 +112,9 @@ export default async function getPremierLeague() {
           fullName: `${firstName} ${lastName}`,
           position: position.displayName,
           number: parseInt(athlete.jersey || '-1'),
-          headshotUrl: `https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/${item.id}.png&w=67&h=67`,
+          headshotUrl:
+            athlete.headshot?.href ??
+            `https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/${item.id}.png&w=350&h=254`,
           linkUrl: `https://www.espn.com/soccer/player/_/id/${athlete.id}/${athlete.slug}`,
           source: source,
           teamId: createdTeam.id,
@@ -121,7 +128,7 @@ export default async function getPremierLeague() {
         skipDuplicates: true,
       });
     } catch (e) {
-      console.log('EPL Error');
+      console.log(`${leagueName} Error`);
       console.error(e);
     }
   }
