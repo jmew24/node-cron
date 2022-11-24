@@ -105,7 +105,7 @@ export const getWNBA = async () => {
           number: parseInt(athlete.jersey || '-1'),
           headshotUrl: `https://a.espncdn.com/i/headshots/wnba/players/full/${athlete.id}.png`,
           linkUrl: `http://www.espn.com/wnba/player/_/id/${athlete.id}/${athlete.slug}`,
-          source: 'ESPN.com',
+          source: source,
           teamId: createdTeam.id,
           sportId: sport.id,
         });
@@ -213,7 +213,7 @@ export default async function getBasketball() {
             number: parseInt(player.jerseyNo || '-1'),
             headshotUrl: `https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/latest/260x190/${player.playerId}.png`,
             linkUrl: `https://ca.global.nba.com/players/#!/${player.code}`,
-            source: 'NBA.com',
+            source: source,
             teamId: createdTeam.id,
             sportId: sport.id,
           });
