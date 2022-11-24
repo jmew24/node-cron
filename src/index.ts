@@ -4,6 +4,7 @@ import prisma from './lib/prisma';
 import getHockey from './external/hockey';
 import getBaseball from './external/baseball';
 import getFootball from './external/football';
+import getCFL from './external/cfl';
 import getBasketball, { getWNBA } from './external/basketball';
 import getMLS from './external/mls';
 import getESPNSoccer from './external/espnSoccer';
@@ -82,6 +83,24 @@ cron.schedule(
     if (!hasStarted) return;
 
     console.log('---------------------');
+    console.log(`[${new Date()}] Running Cron Job for CFL Logging`);
+
+    // Get all CFL players.
+    await getCFL();
+
+    console.log(`[${new Date()}] Completed Cron Job for CFL Logging`);
+    console.log('---------------------');
+  },
+  { timezone: timeZone }
+);
+
+// Run at 12:00 every day.
+cron.schedule(
+  '00 13 * * *',
+  async () => {
+    if (!hasStarted) return;
+
+    console.log('---------------------');
     console.log(`[${new Date()}] Running Cron Job for NBA Logging`);
 
     // Get all NBA players.
@@ -93,9 +112,9 @@ cron.schedule(
   { timezone: timeZone }
 );
 
-// Run at 12:00 every day.
+// Run at 12:15 every day.
 cron.schedule(
-  '00 12 * * *',
+  '15 12 * * *',
   async () => {
     if (!hasStarted) return;
 
@@ -111,9 +130,9 @@ cron.schedule(
   { timezone: timeZone }
 );
 
-// Run at 12:15 every day.
+// Run at 12:30 every day.
 cron.schedule(
-  '15 12 * * *',
+  '30 12 * * *',
   async () => {
     if (!hasStarted) return;
 
@@ -129,9 +148,9 @@ cron.schedule(
   { timezone: timeZone }
 );
 
-// Run at 12:30 every day.
+// Run at 12:45 every day.
 cron.schedule(
-  '30 12 * * *',
+  '45 12 * * *',
   async () => {
     if (!hasStarted) return;
 
@@ -147,9 +166,9 @@ cron.schedule(
   { timezone: timeZone }
 );
 
-// Run at 12:45 every day.
+// Run at 13:00 every day.
 cron.schedule(
-  '45 12 * * *',
+  '00 13 * * *',
   async () => {
     if (!hasStarted) return;
 
@@ -169,9 +188,9 @@ cron.schedule(
   { timezone: timeZone }
 );
 
-// Run at 13:00 every day.
+// Run at 13:15 every day.
 cron.schedule(
-  '00 13 * * *',
+  '15 13 * * *',
   async () => {
     if (!hasStarted) return;
 
@@ -189,9 +208,9 @@ cron.schedule(
   { timezone: timeZone }
 );
 
-// Run at 13:15 every day.
+// Run at 13:30 every day.
 cron.schedule(
-  '15 13 * * *',
+  '30 13 * * *',
   async () => {
     if (!hasStarted) return;
 
@@ -232,6 +251,13 @@ const startUp = async () => {
   console.log(`[${new Date()}] Running NFL Logging`);
   await getFootball();
   console.log(`[${new Date()}] Completed NFL Logging`);
+  /**/
+
+  /** */
+  // Get all CFL players.
+  console.log(`[${new Date()}] Running CFL Logging`);
+  await getCFL();
+  console.log(`[${new Date()}] Completed CFL Logging`);
   /**/
 
   /** */
