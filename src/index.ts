@@ -6,6 +6,7 @@ import getBaseball from './external/baseball';
 import getFootball from './external/football';
 import getBasketball, { getWNBA } from './external/basketball';
 import getMLS from './external/mls';
+import getPremierLeague from './external/premierLeague';
 
 let hasStarted = false;
 const timeZone = 'America/Toronto';
@@ -140,6 +141,28 @@ cron.schedule(
   }
 );
 
+// Run at 12:30 every day.
+cron.schedule(
+  '30 12 * * *',
+  async () => {
+    if (!hasStarted) return;
+
+    console.log('---------------------');
+    console.log(`[${new Date()}] Running Cron Job for Premier League Logging`);
+
+    // Get all Premier League players.
+    await getPremierLeague();
+
+    console.log(
+      `[${new Date()}] Completed Cron Job for Premier League Logging`
+    );
+    console.log('---------------------');
+  },
+  {
+    timezone: timeZone,
+  }
+);
+
 const startUp = async () => {
   hasStarted = false;
   console.log('---------------------');
@@ -186,6 +209,13 @@ const startUp = async () => {
   console.log(`[${new Date()}] Running MLS Logging`);
   await getMLS();
   console.log(`[${new Date()}] Completed MLS Logging`);
+  /**/
+
+  /** */
+  // Get all Premier League players.
+  console.log(`[${new Date()}] Running Premier League Logging`);
+  await getPremierLeague();
+  console.log(`[${new Date()}] Completed Premier League Logging`);
   /**/
 
   console.log('---------------------');
