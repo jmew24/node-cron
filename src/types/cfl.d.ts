@@ -28,30 +28,37 @@ declare type CFLRosterResult = {
   data: CFLRosterData[];
 };
 
-declare type CFLData = {
-  team_id: number;
-  letter: string;
-  abbreviation: string;
-  location: string;
-  nickname: string;
-  full_name: string;
-  venue_id: number;
-  venue_name: string;
-  venue_capacity: number;
-  division_id: number;
-  division_name: string;
-  logo_image_url: null;
-  images: {
-    logo_image_url: string;
-    tablet_image_url: string;
-    mobile_image_url: string;
-  };
-};
-
 declare type CFLResult = {
-  data: CFLData[];
-  errors: [];
-  meta: {
-    copyright: string;
-  };
+  sports: [
+    {
+      id: string;
+      uid: string;
+      name: string;
+      slug: string;
+      leagues: [
+        {
+          id: string;
+          uid: string;
+          name: string;
+          abbreviation: string;
+          shortName: string;
+          slug: string;
+          teams: [
+            {
+              team: {
+                id: string;
+                slug: string;
+                abbreviation: string;
+                displayName: string;
+                shortDisplayName: string;
+                name: string;
+                nickname: string;
+                location: string;
+              };
+            }
+          ];
+        }
+      ];
+    }
+  ];
 };
