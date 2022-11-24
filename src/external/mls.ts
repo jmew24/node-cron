@@ -94,7 +94,7 @@ export default async function getMLS() {
             .replaceAll('%7BformatInstructions%7D', 't_q-best'),
           linkUrl:
             `https://www.mlssoccer.com/players/${firstName}-${lastName}/`.toLocaleLowerCase(),
-          source: 'MLSsoccer.com',
+          source: source,
           teamId: createdTeam.id,
           sportId: sport.id,
         });
