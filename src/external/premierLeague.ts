@@ -62,7 +62,7 @@ export default async function getPremierLeague() {
           abbreviation: item.abbreviation,
           shortName: item.shortDisplayName,
           league: league.name,
-          source: 'ESPN.com',
+          source: source,
           sportId: sport.id,
         },
       });
@@ -109,7 +109,7 @@ export default async function getPremierLeague() {
           number: parseInt(athlete.jersey || '-1'),
           headshotUrl: `https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/${item.id}.png&w=67&h=67`,
           linkUrl: `https://www.espn.com/soccer/player/_/id/${athlete.id}/${athlete.slug}`,
-          source: 'ESPN.com',
+          source: source,
           teamId: createdTeam.id,
           sportId: sport.id,
         });
