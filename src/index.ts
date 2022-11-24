@@ -207,6 +207,24 @@ cron.schedule(
   { timezone: timeZone }
 );
 
+// Run at 13:30 every day.
+cron.schedule(
+  '30 13 * * *',
+  async () => {
+    if (!hasStarted) return;
+
+    console.log('---------------------');
+    console.log(`[${new Date()}] Running Mexican Liga MX Logging`);
+
+    // Get all Mexican Liga MX players.
+    await getESPNSoccer('mex.1', 'Mexican Liga MX');
+
+    console.log(`[${new Date()}] Completed Mexican Liga MX Logging`);
+    console.log('---------------------');
+  },
+  { timezone: timeZone }
+);
+
 const startUp = async () => {
   hasStarted = false;
   console.log('---------------------');
@@ -281,6 +299,13 @@ const startUp = async () => {
   console.log(`[${new Date()}] Running Spanish LaLiga Logging`);
   await getESPNSoccer('esp.1', 'Spanish LaLiga');
   console.log(`[${new Date()}] Completed Spanish LaLiga Logging`);
+  /**/
+
+  /** */
+  // Get all Mexican Liga MX players.
+  console.log(`[${new Date()}] Running Mexican Liga MX Logging`);
+  await getESPNSoccer('mex.1', 'Mexican Liga MX');
+  console.log(`[${new Date()}] Completed Mexican Liga MX Logging`);
   /**/
 
   console.log('---------------------');
