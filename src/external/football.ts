@@ -106,11 +106,11 @@ export default async function getFootball() {
         }
       }
 
-      console.info(createdTeam.fullName, players.length);
       await prisma.player.createMany({
         data: players,
         skipDuplicates: true,
       });
+      console.info(createdTeam.fullName, players.length);
     } catch (e) {
       console.log('Football Error');
       console.error(e);

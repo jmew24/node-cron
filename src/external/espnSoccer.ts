@@ -122,11 +122,11 @@ export default async function getESPNSoccer(
         });
       }
 
-      console.info(createdTeam.fullName, players.length);
       await prisma.player.createMany({
         data: players,
         skipDuplicates: true,
       });
+      console.info(createdTeam.fullName, players.length);
     } catch (e) {
       console.log(`${leagueName} Error`);
       console.error(e);

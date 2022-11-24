@@ -94,11 +94,11 @@ export default async function getHockey() {
         });
       }
 
-      console.info(createdTeam.fullName, players.length);
       await prisma.player.createMany({
         data: players,
         skipDuplicates: true,
       });
+      console.info(createdTeam.fullName, players.length);
     } catch (e) {
       console.log('Hockey Error');
       console.error(e);
