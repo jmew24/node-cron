@@ -20,15 +20,6 @@ export default async function getPremierLeague() {
     `http://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/teams`
   )) as EPLResult;
 
-  await prisma.team.deleteMany({
-    where: {
-      sport: {
-        id: sport.id,
-      },
-      source: 'ESPN.com',
-    },
-  });
-
   const deletedTeams = [] as string[];
   const league = teamResult.sports[0].leagues[0];
   for (const t of league.teams) {
@@ -78,41 +69,50 @@ export default async function getPremierLeague() {
 
       const rosterResult = (await fetchRequest(
         `http://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/teams/${item.id}/roster`
-      )) as NFLRosterResult;
+      )) as EPLRosterResult;
 
       if (!rosterResult.athletes || rosterResult.athletes.length <= 0) continue;
 
       const players = [] as Prisma.PlayerCreateManyInput[];
       for (const athlete of rosterResult.athletes) {
         const pos = athlete.position;
-        for (const person of athlete.items) {
-          const position = person.position ?? {
-            abbreviation: pos,
-            name: pos,
-            displayName: pos,
-            id: '-1',
-          };
-          const lastName = person.lastName;
-          const firstName = person.firstName;
-          const playerIdentifier =
-            `${person.id}-${league.name}-${person.slug}`.toLowerCase();
-
-          if (!position.displayName) continue;
-
-          players.push({
-            identifier: playerIdentifier,
-            firstName: firstName,
-            lastName: lastName,
-            fullName: `${firstName} ${lastName}`,
-            position: position.displayName,
-            number: parseInt(person.jersey || '-1'),
-            headshotUrl: `https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/${item.id}.png&w=67&h=67`,
-            linkUrl: `https://www.espn.com/soccer/player/_/id/${person.id}/${person.slug}`,
-            source: 'ESPN.com',
-            teamId: createdTeam.id,
-            sportId: sport.id,
-          });
+        const position = athlete.position ?? {
+          abbreviation: pos,
+          name: pos,
+          displayName: pos,
+          id: '-1',
+        };
+        let lastName = athlete.lastName ?? athlete.middleName ?? '';
+        let firstName = athlete.firstName;
+        if (lastName === '') {
+          if (athlete.middleName) {
+            lastName = athlete.middleName;
+            firstName = athlete.firstName;
+          } else {
+            lastName = athlete.slug.split('-')[1] ?? '';
+            firstName = athlete.slug.split('-')[0] ?? athlete.firstName;
+            lastName.charAt(0).toUpperCase() + lastName.slice(1);
+            firstName.charAt(0).toUpperCase() + firstName.slice(1);
+          }
         }
+        const playerIdentifier =
+          `${athlete.id}-${league.name}-${athlete.slug}`.toLowerCase();
+
+        if (!position.displayName || lastName === '') continue;
+
+        players.push({
+          identifier: playerIdentifier,
+          firstName: firstName,
+          lastName: lastName,
+          fullName: `${firstName} ${lastName}`,
+          position: position.displayName,
+          number: parseInt(athlete.jersey || '-1'),
+          headshotUrl: `https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/${item.id}.png&w=67&h=67`,
+          linkUrl: `https://www.espn.com/soccer/player/_/id/${athlete.id}/${athlete.slug}`,
+          source: 'ESPN.com',
+          teamId: createdTeam.id,
+          sportId: sport.id,
+        });
       }
 
       console.info(createdTeam.fullName, players.length);

@@ -2,22 +2,23 @@ declare type EPLRosterResult = {
   coach: [];
   athletes: [
     {
-      position: string;
-      items: [
-        {
-          id: string;
-          firstName: string;
-          lastName: string;
-          slug: string;
-          jersey: string;
-          position: {
-            id: string;
-            name: string;
-            displayName: string;
-            abbreviation: string;
-          };
-        }
-      ];
+      id: string;
+      guid: string;
+      firstName: string;
+      lastName: string;
+      middleName: string;
+      fullName: string;
+      displayName: string;
+      displayWeight: string;
+      slug: string;
+      jersey: string;
+      position: {
+        id: string;
+        name: string;
+        displayName: string;
+        abbreviation: string;
+        leaf: boolean;
+      };
     }
   ];
 };
