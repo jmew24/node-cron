@@ -76,8 +76,9 @@ export default async function getBaseball() {
       for (const rosterItem of roster) {
         if (
           !rosterItem.person ||
+          !rosterItem.person.fullName ||
           !rosterItem.position ||
-          !rosterItem.person.fullName
+          (!rosterItem.position.abbreviation && !rosterItem.position.name)
         )
           continue;
         const person = rosterItem.person;
@@ -91,7 +92,7 @@ export default async function getBaseball() {
           firstName: firstName,
           lastName: lastName,
           fullName: person.fullName,
-          position: position.abbreviation,
+          position: position.abbreviation ?? position.name,
           number: parseInt(rosterItem.jerseyNumber || '-1'),
           headshotUrl: `https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_426,q_auto:best/v1/people/${person.id}/headshot/67/current`,
           linkUrl:
