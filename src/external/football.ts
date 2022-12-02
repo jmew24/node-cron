@@ -99,7 +99,7 @@ export default async function getFootball() {
             number: parseInt(person.jersey || '-1'),
             headshotUrl: `https://a.espncdn.com/i/headshots/nfl/players/full/${person.id}.png`,
             linkUrl: `http://www.espn.com/nfl/player/_/id/${person.id}/${person.slug}`,
-            source: 'ESPN.com',
+            source: source,
             teamId: createdTeam.id,
             sportId: sport.id,
           });

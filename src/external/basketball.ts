@@ -84,7 +84,7 @@ export const getWNBA = async () => {
       });
 
       const rosterResult = (await fetchRequest(
-        // https://data.wnba.com/data/5s/v2015/json/mobile_teams/wnba/2022/teams/{item.abbreviation.toLowerCase()}_roster.json
+        // https://data.wnba.com/data/5s/v2015/json/mobile_teams/wnba/2022/teams/{item.shortName.toLowerCase()}_roster.json
         `https://site.api.espn.com/apis/site/v2/sports/basketball/wnba/teams/${item.id}/roster`
       )) as WNBARosterResult;
 

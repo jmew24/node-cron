@@ -88,7 +88,7 @@ export default async function getHockey() {
             .toLowerCase()
             .split(' ')
             .join('-')}-${person.id}`,
-          source: 'NHL.com',
+          source: source,
           teamId: createdTeam.id,
           sportId: sport.id,
         });

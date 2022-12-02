@@ -97,7 +97,7 @@ export default async function getBaseball() {
           headshotUrl: `https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_426,q_auto:best/v1/people/${person.id}/headshot/67/current`,
           linkUrl:
             `https://www.mlb.com/player/${firstName}-${lastName}-${person.id}`.toLocaleLowerCase(),
-          source: 'MLB.com',
+          source: source,
           teamId: createdTeam.id,
           sportId: sport.id,
         });
