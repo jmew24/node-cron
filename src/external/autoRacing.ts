@@ -62,16 +62,21 @@ export async function getIndyCar() {
     const players = [] as Prisma.PlayerCreateManyInput[];
     for (const rosterItem of roster) {
       try {
-        const playerSlug = `${rosterItem.first_name.replace(
-          /\W/g,
-          ''
-        )}-${rosterItem.last_name.replace(/\W/g, '')}`
+        if (!rosterItem.first_name || !rosterItem.last_name) continue;
+
+        const firstName = rosterItem.first_name
           .replace('Jr.', '')
           .replace('jr.', '')
           .replace("'", '')
-          .toLowerCase();
+          .replace(/\W/g, '');
 
-        if (!rosterItem.first_name || !rosterItem.last_name) continue;
+        const lastName = rosterItem.last_name
+          .replace('Jr.', '')
+          .replace('jr.', '')
+          .replace("'", '')
+          .replace(/\W/g, '');
+
+        const playerSlug = `${firstName}-${lastName}`.toLowerCase();
 
         players.push({
           identifier:
@@ -81,7 +86,7 @@ export async function getIndyCar() {
           fullName: `${rosterItem.first_name} ${rosterItem.last_name}`,
           position: rosterItem.rank.toString(),
           number: rosterItem.points,
-          headshotUrl: `https://digbza2f4g9qo.cloudfront.net/-/media/IndyCar/Drivers/IndyCar-Series/Driver-List/${rosterItem.first_name}${rosterItem.last_name}.png?h=64&iar=1&w=64`,
+          headshotUrl: `https://digbza2f4g9qo.cloudfront.net/-/media/IndyCar/Drivers/IndyCar-Series/Driver-List/${firstName}${lastName}.png?h=64&iar=1&w=64`,
           linkUrl: `https://www.indycar.com/Series/IndyCar-Series/${playerSlug}`,
           source: source,
           teamId: createdTeam.id,
@@ -162,16 +167,21 @@ export default async function getFormula1() {
     const players = [] as Prisma.PlayerCreateManyInput[];
     for (const rosterItem of roster) {
       try {
-        const playerSlug = `${rosterItem.first_name.replace(
-          /\W/g,
-          ''
-        )}-${rosterItem.last_name.replace(/\W/g, '')}`
+        if (!rosterItem.first_name || !rosterItem.last_name) continue;
+
+        const firstName = rosterItem.first_name
           .replace('Jr.', '')
           .replace('jr.', '')
           .replace("'", '')
-          .toLowerCase();
+          .replace(/\W/g, '');
 
-        if (!rosterItem.first_name || !rosterItem.last_name) continue;
+        const lastName = rosterItem.last_name
+          .replace('Jr.', '')
+          .replace('jr.', '')
+          .replace("'", '')
+          .replace(/\W/g, '');
+
+        const playerSlug = `${firstName}-${lastName}`.toLowerCase();
 
         players.push({
           identifier:
