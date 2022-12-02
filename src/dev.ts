@@ -18,7 +18,7 @@ process.on('SIGTERM', async () => {
   console.log('---------------------');
 });
 
-const startUp = async () => {
+const Dev = async () => {
   console.log('---------------------');
   console.log(`[${new Date()}] Starting cron job scheduler...`);
   console.log('---------------------');
@@ -119,4 +119,4 @@ const startUp = async () => {
   console.log('---------------------');
 };
 
-startUp();
+export default Dev;

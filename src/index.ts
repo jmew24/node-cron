@@ -340,4 +340,7 @@ const startUp = async () => {
   hasStarted = true;
 };
 
-startUp();
+//startUp();
+
+import Dev from './dev';
+Dev();
