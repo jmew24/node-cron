@@ -1,18 +1,3 @@
-const WTAPlayerHeadshotResult = {
-  content: [
-    {
-      id: 2839751,
-      accountId: 29,
-      type: 'photo',
-      title: 'Haddad-Maia_crop-v2',
-      onDemandUrl:
-        'https://photoresources.wtatennis.com/photo-resources/2022/10/04/ecaecdbc-c59f-4d5e-b372-84ee7ddc1c1f/Haddad-Maia_crop-v2.jpg',
-      imageUrl:
-        'https://photoresources.wtatennis.com/wta/photo/2022/10/04/7fce8e54-ec8d-4980-8de7-ddfdac902096/Haddad-Maia_crop-v2.jpg',
-    },
-  ],
-};
-
 declare type WTAPlayerHeadshotResult = {
   content: {
     id: number;
