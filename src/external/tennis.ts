@@ -174,10 +174,6 @@ export default async function getATP() {
     const players = [] as Prisma.PlayerCreateManyInput[];
     for (const rosterItem of roster) {
       try {
-        console.log(
-          rosterItem.first_name.replace(/\W/g, ''),
-          rosterItem.last_name.replace(/\W/g, '')
-        );
         const playerResult = (await fetchRequest(
           `https://www.atptour.com/en/-/ajax/PredictiveContentSearch/GetPlayerResults/${rosterItem.first_name.replace(
             /\W/g,
