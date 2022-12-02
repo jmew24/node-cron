@@ -9,6 +9,7 @@ import getBasketball, { getWNBA } from './external/basketball';
 import getMLS from './external/mls';
 import getESPNSoccer from './external/espnSoccer';
 import getATP, { getWTA } from './external/tennis';
+import getFormula1, { getIndyCar } from './external/autoRacing';
 
 let hasStarted = false;
 const timeZone = 'America/Toronto';
@@ -263,6 +264,42 @@ cron.schedule(
   { timezone: timeZone }
 );
 
+// Run at 12:15 every day.
+cron.schedule(
+  '15 12 * * *',
+  async () => {
+    if (!hasStarted) return;
+
+    console.log('---------------------');
+    console.log(`[${new Date()}] Running Formula1 Logging`);
+
+    // Get all Formula1 players.
+    await getFormula1();
+
+    console.log(`[${new Date()}] Completed Formula1 Logging`);
+    console.log('---------------------');
+  },
+  { timezone: timeZone }
+);
+
+// Run at 12:30 every day.
+cron.schedule(
+  '30 12 * * *',
+  async () => {
+    if (!hasStarted) return;
+
+    console.log('---------------------');
+    console.log(`[${new Date()}] Running IndyCar Logging`);
+
+    // Get all IndyCar players.
+    await getIndyCar();
+
+    console.log(`[${new Date()}] Completed IndyCar Logging`);
+    console.log('---------------------');
+  },
+  { timezone: timeZone }
+);
+
 const startUp = async () => {
   hasStarted = false;
   console.log('---------------------');
@@ -334,13 +371,25 @@ const startUp = async () => {
   await getWTA();
   console.log(`[${new Date()}] Completed WTA Logging`);
 
+  //Get all Formula1 players.
+  console.log(`[${new Date()}] Running Formula1 Logging`);
+  await getFormula1();
+  console.log(`[${new Date()}] Completed Formula1 Logging`);
+
+  //Get all IndyCar players.
+  console.log(`[${new Date()}] Running IndyCar Logging`);
+  await getIndyCar();
+  console.log(`[${new Date()}] Completed IndyCar Logging`);
+
   console.log('---------------------');
   console.log(`[${new Date()}] Completed startup...`);
   console.log('---------------------');
   hasStarted = true;
 };
 
-//startUp();
+startUp();
 
+/**
 import Dev from './dev';
 Dev();
+/**/

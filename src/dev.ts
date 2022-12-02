@@ -7,6 +7,7 @@ import getBasketball, { getWNBA } from './external/basketball';
 import getMLS from './external/mls';
 import getESPNSoccer from './external/espnSoccer';
 import getATP, { getWTA } from './external/tennis';
+import getFormula1, { getIndyCar } from './external/autoRacing';
 
 process.on('SIGTERM', async () => {
   try {
@@ -100,18 +101,32 @@ const Dev = async () => {
   console.log(`[${new Date()}] Completed Mexican Liga MX Logging`);
   /**/
 
-  /** */
+  /**
   //Get all ATP players.
   console.log(`[${new Date()}] Running ATP Logging`);
   await getATP();
   console.log(`[${new Date()}] Completed ATP Logging`);
   /**/
 
-  /** */
+  /**
   //Get all WTA players.
   console.log(`[${new Date()}] Running WTA Logging`);
   await getWTA();
   console.log(`[${new Date()}] Completed WTA Logging`);
+  /**/
+
+  /** */
+  //Get all Formula1 players.
+  console.log(`[${new Date()}] Running Formula1 Logging`);
+  await getFormula1();
+  console.log(`[${new Date()}] Completed Formula1 Logging`);
+  /**/
+
+  /** */
+  //Get all IndyCar players.
+  console.log(`[${new Date()}] Running IndyCar Logging`);
+  await getIndyCar();
+  console.log(`[${new Date()}] Completed IndyCar Logging`);
   /**/
 
   console.log('---------------------');
