@@ -23,7 +23,7 @@ export async function getIndyCar() {
     abbreviation: 'IndyCar',
     shortName: 'IndyCar',
     league: 'irl',
-    source: 'formula1.com',
+    source: 'indycar.com',
     sport: 'AutoRacing',
   };
   try {
@@ -65,7 +65,11 @@ export async function getIndyCar() {
         const playerSlug = `${rosterItem.first_name.replace(
           /\W/g,
           ''
-        )}-${rosterItem.last_name.replace(/\W/g, '')}`.toLowerCase();
+        )}-${rosterItem.last_name.replace(/\W/g, '')}`
+          .replace('Jr.', '')
+          .replace('jr.', '')
+          .replace("'", '')
+          .toLowerCase();
 
         if (!rosterItem.first_name || !rosterItem.last_name) continue;
 
@@ -161,7 +165,11 @@ export default async function getFormula1() {
         const playerSlug = `${rosterItem.first_name.replace(
           /\W/g,
           ''
-        )}-${rosterItem.last_name.replace(/\W/g, '')}`.toLowerCase();
+        )}-${rosterItem.last_name.replace(/\W/g, '')}`
+          .replace('Jr.', '')
+          .replace('jr.', '')
+          .replace("'", '')
+          .toLowerCase();
 
         if (!rosterItem.first_name || !rosterItem.last_name) continue;
 
