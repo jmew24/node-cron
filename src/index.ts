@@ -10,6 +10,7 @@ import getMLS from './external/mls';
 import getESPNSoccer from './external/espnSoccer';
 import getATP, { getWTA } from './external/tennis';
 import getFormula1, { getIndyCar } from './external/autoRacing';
+import getPGA from './external/golf';
 
 let hasStarted = false;
 const timeZone = 'America/Toronto';
@@ -300,6 +301,24 @@ cron.schedule(
   { timezone: timeZone }
 );
 
+// Run at 12:45 every day.
+cron.schedule(
+  '45 12 * * *',
+  async () => {
+    if (!hasStarted) return;
+
+    console.log('---------------------');
+    console.log(`[${new Date()}] Running PGA Logging`);
+
+    // Get all PGA players.
+    await getPGA();
+
+    console.log(`[${new Date()}] Completed PGA Logging`);
+    console.log('---------------------');
+  },
+  { timezone: timeZone }
+);
+
 const startUp = async () => {
   hasStarted = false;
   console.log('---------------------');
@@ -380,6 +399,11 @@ const startUp = async () => {
   console.log(`[${new Date()}] Running IndyCar Logging`);
   await getIndyCar();
   console.log(`[${new Date()}] Completed IndyCar Logging`);
+
+  //Get all PGA players.
+  console.log(`[${new Date()}] Running PGA Logging`);
+  await getPGA();
+  console.log(`[${new Date()}] Completed PGA Logging`);
 
   console.log('---------------------');
   console.log(`[${new Date()}] Completed startup...`);
