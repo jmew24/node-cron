@@ -10,7 +10,7 @@ import getMLS from './external/mls';
 import getESPNSoccer from './external/espnSoccer';
 import getATP, { getWTA } from './external/tennis';
 import getFormula1, { getIndyCar } from './external/autoRacing';
-import getPGA from './external/golf';
+import getPGA, { getLPGA } from './external/golf';
 
 let hasStarted = false;
 const timeZone = 'America/Toronto';
@@ -319,6 +319,24 @@ cron.schedule(
   { timezone: timeZone }
 );
 
+// Run at 13:00 every day.
+cron.schedule(
+  '00 13 * * *',
+  async () => {
+    if (!hasStarted) return;
+
+    console.log('---------------------');
+    console.log(`[${new Date()}] Running LPGA Logging`);
+
+    // Get all LPGA players.
+    await getLPGA();
+
+    console.log(`[${new Date()}] Completed LPGA Logging`);
+    console.log('---------------------');
+  },
+  { timezone: timeZone }
+);
+
 const startUp = async () => {
   hasStarted = false;
   console.log('---------------------');
@@ -404,6 +422,11 @@ const startUp = async () => {
   console.log(`[${new Date()}] Running PGA Logging`);
   await getPGA();
   console.log(`[${new Date()}] Completed PGA Logging`);
+
+  //Get all LPGA players.
+  console.log(`[${new Date()}] Running LPGA Logging`);
+  await getLPGA();
+  console.log(`[${new Date()}] Completed LPGA Logging`);
 
   console.log('---------------------');
   console.log(`[${new Date()}] Completed startup...`);

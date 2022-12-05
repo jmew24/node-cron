@@ -1,3 +1,31 @@
+declare type LPGAResult = {
+  status: string;
+  code: number;
+  data: {
+    season: string;
+    league_name: string;
+    teams: [
+      {
+        id: number;
+        first_name: string;
+        last_name: string;
+        flag_url: string;
+        stats: [
+          {
+            category: string;
+            rank: number;
+            events: number;
+            value: number;
+            rounds: number;
+            strokes: number;
+            stroke_average: number;
+          }
+        ];
+      }
+    ];
+  };
+};
+
 declare type PGAPlayerResult = {
   items: [
     {
@@ -12,17 +40,17 @@ declare type PGAPlayerResult = {
   ];
 };
 
-declare type PGARosterResult = {
-  urlName: string;
-  name: string;
-  first_name: string;
-  last_name: string;
-  id: string;
-  country: string;
-  countryName: string;
-  active: boolean;
-};
-
 declare type PGAResult = {
-  players: PGARosterResult[];
+  players: [
+    {
+      urlName: string;
+      name: string;
+      first_name: string;
+      last_name: string;
+      id: string;
+      country: string;
+      countryName: string;
+      active: boolean;
+    }
+  ];
 };

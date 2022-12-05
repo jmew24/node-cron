@@ -8,7 +8,7 @@ import getMLS from './external/mls';
 import getESPNSoccer from './external/espnSoccer';
 import getATP, { getWTA } from './external/tennis';
 import getFormula1, { getIndyCar } from './external/autoRacing';
-import getPGA from './external/golf';
+import getPGA, { getLPGA } from './external/golf';
 
 process.on('SIGTERM', async () => {
   try {
@@ -130,12 +130,18 @@ const Dev = async () => {
   console.log(`[${new Date()}] Completed IndyCar Logging`);
   /**/
 
-  /** */
+  /**
   //Get all PGA players.
   console.log(`[${new Date()}] Running PGA Logging`);
   await getPGA();
   console.log(`[${new Date()}] Completed PGA Logging`);
   /**/
+
+  /** */
+  //Get all LPGA players.
+  console.log(`[${new Date()}] Running LPGA Logging`);
+  await getLPGA();
+  console.log(`[${new Date()}] Completed LPGA Logging`);
 
   console.log('---------------------');
   console.log(`[${new Date()}] Completed startup...`);
