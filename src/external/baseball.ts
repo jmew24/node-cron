@@ -3,6 +3,61 @@ import { Prisma } from '@prisma/client';
 import fetchRequest from '../lib/fetchRequest';
 import prisma from '../lib/prisma';
 
+export async function deleteBaseball() {
+  const sport = await prisma.sport.upsert({
+    where: {
+      name: 'Baseball',
+    },
+    update: {
+      name: 'Baseball',
+    },
+    create: {
+      name: 'Baseball',
+    },
+  });
+
+  const teamResult = (await fetchRequest(
+    `https://statsapi.mlb.com/api/v1/teams/`
+  )) as MLBResult;
+
+  const deletedTeams = [] as string[];
+  for (const item of teamResult.teams) {
+    try {
+      const source = 'MLB.com';
+
+      if (
+        !item.name ||
+        !item.locationName ||
+        !item.abbreviation ||
+        !item.teamName
+      )
+        continue;
+
+      if (
+        !deletedTeams.find(
+          (dt) => dt === `${source}-${item.sport.name.toLowerCase()}`
+        )
+      ) {
+        await prisma.team.deleteMany({
+          where: {
+            sport: {
+              id: sport.id,
+            },
+            league: item.sport.name,
+            source: source,
+          },
+        });
+        deletedTeams.push(`${source}-${item.sport.name.toLowerCase()}`);
+      }
+    } catch (e) {
+      console.log('Delete Baseball Error');
+      console.error(e);
+    }
+  }
+
+  return true;
+}
+
 export default async function getBaseball() {
   const sport = await prisma.sport.upsert({
     where: {

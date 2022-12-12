@@ -17,7 +17,7 @@ export default async function getMLS() {
   });
 
   const teamResult = (await fetchRequest(
-    `https://sportapi.mlssoccer.com/api/clubs/2022/98?culture=en-us`
+    `https://sportapi.mlssoccer.com/api/clubs/${new Date().getFullYear()}/98?culture=en-us`
   )) as MLSResult;
 
   const deletedTeams = [] as string[];
@@ -61,7 +61,9 @@ export default async function getMLS() {
       });
 
       const rosterResult = (await fetchRequest(
-        `https://stats-api.mlssoccer.com/v1/players/seasons?&season_opta_id=2022&club_opta_id=${item.optaId}&competition_opta_id=98&page_size=1000&ttl=1800&include=player`
+        `https://stats-api.mlssoccer.com/v1/players/seasons?&season_opta_id=${new Date().getFullYear()}&club_opta_id=${
+          item.optaId
+        }&competition_opta_id=98&page_size=1000&ttl=1800&include=player`
       )) as MLSRosterResult;
 
       if (!rosterResult || rosterResult.length <= 0) continue;

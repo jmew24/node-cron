@@ -3,6 +3,92 @@ import { Prisma, Team } from '@prisma/client';
 import fetchRequest from '../lib/fetchRequest';
 import prisma from '../lib/prisma';
 
+export async function deleteWTA() {
+  const sport = await prisma.sport.upsert({
+    where: {
+      name: 'Tennis',
+    },
+    update: {
+      name: 'Tennis',
+    },
+    create: {
+      name: 'Tennis',
+    },
+  });
+
+  const item = {
+    id: 2,
+    fullName: 'WTA Tour',
+    city: '',
+    abbreviation: 'WTA',
+    shortName: 'WTA',
+    league: 'wta',
+    source: 'WTATennis.com',
+    sport: 'Tennis',
+  };
+
+  try {
+    const source = item.source;
+    await prisma.team.deleteMany({
+      where: {
+        sport: {
+          id: sport.id,
+        },
+        league: item.league,
+        source: source,
+      },
+    });
+  } catch (e) {
+    console.log('Delete WTA Error');
+    console.error(e);
+  }
+
+  return true;
+}
+
+export async function deleteATP() {
+  const sport = await prisma.sport.upsert({
+    where: {
+      name: 'Tennis',
+    },
+    update: {
+      name: 'Tennis',
+    },
+    create: {
+      name: 'Tennis',
+    },
+  });
+
+  const item = {
+    id: 1,
+    fullName: 'ATP Tour',
+    city: '',
+    abbreviation: 'ATP',
+    shortName: 'ATP',
+    league: 'atp',
+    source: 'ATPtour.com',
+    sport: 'Tennis',
+  };
+
+  try {
+    const source = item.source;
+    await prisma.team.deleteMany({
+      where: {
+        sport: {
+          id: sport.id,
+        },
+        league: item.league,
+        source: source,
+      },
+    });
+  } catch (e) {
+    console.log('Delete ATP Error');
+    console.error(e);
+  }
+
+  return true;
+}
+
 export async function getWTA() {
   const sport = await prisma.sport.upsert({
     where: {
@@ -55,7 +141,7 @@ export async function getWTA() {
     });
 
     const rosterResult = (await fetchRequest(
-      'https://mobile-statsv2.sportsnet.ca/standings?league=wta&season=2022'
+      `https://mobile-statsv2.sportsnet.ca/standings?league=wta&season=${new Date().getFullYear()}`
     )) as WTAResult;
 
     const roster = rosterResult.data.teams;

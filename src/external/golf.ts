@@ -55,7 +55,7 @@ export async function getLPGA() {
     });
 
     const rosterResult = (await fetchRequest(
-      'https://mobile-statsv2.sportsnet.ca/standings.json?league=lpga&season=2022'
+      `https://mobile-statsv2.sportsnet.ca/standings.json?league=lpga&season=${new Date().getFullYear()}`
     )) as LPGAResult;
 
     if (rosterResult.status !== 'success') return true;
