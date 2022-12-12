@@ -29,7 +29,7 @@ export async function getIndyCar() {
   try {
     const source = item.source;
     const teamIdentifier =
-      `${item.id}-${item.sport}-${item.fullName}`.toLowerCase();
+      `${item.id}-${item.league}-${item.fullName}`.toLowerCase();
 
     await prisma.team.deleteMany({
       where: {
@@ -55,7 +55,7 @@ export async function getIndyCar() {
     });
 
     const rosterResult = (await fetchRequest(
-      'https://mobile-statsv2.sportsnet.ca/standings?league=irl&season=2022'
+      `https://mobile-statsv2.sportsnet.ca/standings?league=irl&season=${new Date().getFullYear()}`
     )) as AutoRacingResult;
 
     const roster = rosterResult.data.teams;
@@ -80,7 +80,7 @@ export async function getIndyCar() {
 
         players.push({
           identifier:
-            `${rosterItem.id}-${item.sport}-${playerSlug}`.toLowerCase(),
+            `${rosterItem.id}-${item.league}-${playerSlug}`.toLowerCase(),
           firstName: rosterItem.first_name,
           lastName: rosterItem.last_name,
           fullName: `${rosterItem.first_name} ${rosterItem.last_name}`,
@@ -102,6 +102,127 @@ export async function getIndyCar() {
     console.info(createdTeam.fullName, players.length);
   } catch (e) {
     console.log('IndyCar Error');
+    console.error(e);
+  }
+
+  return true;
+}
+
+export async function getNASCAR() {
+  const sport = await prisma.sport.upsert({
+    where: {
+      name: 'AutoRacing',
+    },
+    update: {
+      name: 'AutoRacing',
+    },
+    create: {
+      name: 'AutoRacing',
+    },
+  });
+
+  const item = {
+    id: 1,
+    fullName: 'NASCAR',
+    city: '',
+    abbreviation: 'NASCAR',
+    shortName: 'NASCAR',
+    league: 'nascar',
+    source: 'NASCAR.com',
+    sport: 'AutoRacing',
+  };
+  try {
+    const source = item.source;
+    const teamIdentifier =
+      `${item.id}-${item.sport}-${item.fullName}`.toLowerCase();
+
+    await prisma.team.deleteMany({
+      where: {
+        sport: {
+          id: sport.id,
+        },
+        league: item.league,
+        source: source,
+      },
+    });
+
+    const createdTeam = await prisma.team.create({
+      data: {
+        identifier: teamIdentifier,
+        fullName: item.fullName,
+        city: item.city,
+        abbreviation: item.abbreviation,
+        shortName: item.shortName,
+        league: item.league,
+        source: source,
+        sportId: sport.id,
+      },
+    });
+
+    const nascarRosterResult = (await fetchRequest(
+      `https://cf.nascar.com/cacher/drivers.json`
+    )) as NascarResult;
+
+    const drivers = nascarRosterResult.response;
+
+    const rosterResult = (await fetchRequest(
+      `https://mobile-statsv2.sportsnet.ca/standings?league=nascar&season=${new Date().getFullYear()}`
+    )) as AutoRacingResult;
+
+    const roster = rosterResult.data.teams;
+    const players = [] as Prisma.PlayerCreateManyInput[];
+    for (const rosterItem of roster) {
+      try {
+        const firstName = rosterItem.first_name
+          .replace('Jr.', '')
+          .replace('jr.', '')
+          .replace("'", '')
+          .replace(/\W/g, '');
+
+        const lastName = rosterItem.last_name
+          .replace('Jr.', '')
+          .replace('jr.', '')
+          .replace("'", '')
+          .replace(/\W/g, '');
+
+        const playerSlug = `${firstName}-${lastName}`.toLowerCase();
+
+        const driver =
+          drivers.find(
+            (d) =>
+              d.First_Name === rosterItem.first_name &&
+              d.Last_Name === rosterItem.last_name
+          ) ?? ({} as NascarRosterResult);
+
+        players.push({
+          identifier:
+            `${rosterItem.id}-${item.league}-${playerSlug}`.toLowerCase(),
+          firstName: rosterItem.first_name,
+          lastName: rosterItem.last_name,
+          fullName: `${rosterItem.first_name} ${rosterItem.last_name}`,
+          position: rosterItem.rank.toString(),
+          number: rosterItem.points,
+          headshotUrl:
+            driver.Image ??
+            driver.Image_Transparent ??
+            `https://www.nascar.com/wp-content/uploads/sites/7/2022/01/28/1_2022_${firstName}_${lastName}_550x440.png`,
+          linkUrl:
+            driver.Driver_Page ??
+            `https://www.nascar.com/drivers//${playerSlug}.html`,
+          source: source,
+          teamId: createdTeam.id,
+          sportId: sport.id,
+        });
+      } catch {}
+    }
+
+    await prisma.player.createMany({
+      data: players,
+      skipDuplicates: true,
+    });
+    console.info(createdTeam.fullName, players.length);
+  } catch (e) {
+    console.log('Formula1 Error');
     console.error(e);
   }
 
@@ -160,7 +281,7 @@ export default async function getFormula1() {
     });
 
     const rosterResult = (await fetchRequest(
-      'https://mobile-statsv2.sportsnet.ca/standings?league=form1&season=2022'
+      `https://mobile-statsv2.sportsnet.ca/standings?league=form1&season=${new Date().getFullYear()}`
     )) as AutoRacingResult;
 
     const roster = rosterResult.data.teams;
@@ -185,7 +306,7 @@ export default async function getFormula1() {
 
         players.push({
           identifier:
-            `${rosterItem.id}-${item.sport}-${playerSlug}`.toLowerCase(),
+            `${rosterItem.id}-${item.league}-${playerSlug}`.toLowerCase(),
           firstName: rosterItem.first_name,
           lastName: rosterItem.last_name,
           fullName: `${rosterItem.first_name} ${rosterItem.last_name}`,

@@ -9,7 +9,7 @@ import getBasketball, { getWNBA } from './external/basketball';
 import getMLS from './external/mls';
 import getESPNSoccer from './external/espnSoccer';
 import getATP, { getWTA } from './external/tennis';
-import getFormula1, { getIndyCar } from './external/autoRacing';
+import getFormula1, { getIndyCar, getNASCAR } from './external/autoRacing';
 import getPGA, { getLPGA } from './external/golf';
 
 let hasStarted = false;
@@ -274,7 +274,7 @@ cron.schedule(
     console.log('---------------------');
     console.log(`[${new Date()}] Running Formula1 Logging`);
 
-    // Get all Formula1 players.
+    // Get all Formula1 drivers.
     await getFormula1();
 
     console.log(`[${new Date()}] Completed Formula1 Logging`);
@@ -292,7 +292,7 @@ cron.schedule(
     console.log('---------------------');
     console.log(`[${new Date()}] Running IndyCar Logging`);
 
-    // Get all IndyCar players.
+    // Get all IndyCar drivers.
     await getIndyCar();
 
     console.log(`[${new Date()}] Completed IndyCar Logging`);
@@ -308,6 +308,24 @@ cron.schedule(
     if (!hasStarted) return;
 
     console.log('---------------------');
+    console.log(`[${new Date()}] Running NASCAR Logging`);
+
+    // Get all NASCAR drivers.
+    await getNASCAR();
+
+    console.log(`[${new Date()}] Completed NASCAR Logging`);
+    console.log('---------------------');
+  },
+  { timezone: timeZone }
+);
+
+// Run at 13:00 every day.
+cron.schedule(
+  '00 13 * * *',
+  async () => {
+    if (!hasStarted) return;
+
+    console.log('---------------------');
     console.log(`[${new Date()}] Running PGA Logging`);
 
     // Get all PGA players.
@@ -319,9 +337,9 @@ cron.schedule(
   { timezone: timeZone }
 );
 
-// Run at 13:00 every day.
+// Run at 13:15 every day.
 cron.schedule(
-  '00 13 * * *',
+  '15 13 * * *',
   async () => {
     if (!hasStarted) return;
 
@@ -408,15 +426,20 @@ const startUp = async () => {
   await getWTA();
   console.log(`[${new Date()}] Completed WTA Logging`);
 
-  //Get all Formula1 players.
+  //Get all Formula1 drivers.
   console.log(`[${new Date()}] Running Formula1 Logging`);
   await getFormula1();
   console.log(`[${new Date()}] Completed Formula1 Logging`);
 
-  //Get all IndyCar players.
+  //Get all IndyCar drivers.
   console.log(`[${new Date()}] Running IndyCar Logging`);
   await getIndyCar();
   console.log(`[${new Date()}] Completed IndyCar Logging`);
+
+  //Get all NASCAR drivers.
+  console.log(`[${new Date()}] Running NASCAR Logging`);
+  await getNASCAR();
+  console.log(`[${new Date()}] Completed NASCAR Logging`);
 
   //Get all PGA players.
   console.log(`[${new Date()}] Running PGA Logging`);
