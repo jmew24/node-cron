@@ -2,7 +2,6 @@ import { Prisma, Team } from '@prisma/client';
 
 import fetchRequest from '../lib/fetchRequest';
 import prisma from '../lib/prisma';
-import redis from '../lib/redis';
 
 export async function deleteWTA() {
   const sport = await prisma.sport.upsert({
@@ -16,12 +15,6 @@ export async function deleteWTA() {
       name: 'Tennis',
     },
   });
-
-  if (sport) {
-    await redis.del(`sportCache:${sport.name.toLowerCase()}`);
-    await redis.del(`teamCache:${sport.name.toLowerCase()}`);
-    await redis.del(`playerCache:${sport.name.toLowerCase()}`);
-  }
 
   const item = {
     id: 2,
@@ -66,12 +59,6 @@ export async function deleteATP() {
     },
   });
 
-  if (sport) {
-    await redis.del(`sportCache:${sport.name.toLowerCase()}`);
-    await redis.del(`teamCache:${sport.name.toLowerCase()}`);
-    await redis.del(`playerCache:${sport.name.toLowerCase()}`);
-  }
-
   const item = {
     id: 1,
     fullName: 'ATP Tour',
@@ -114,12 +101,6 @@ export async function getWTA() {
       name: 'Tennis',
     },
   });
-
-  if (sport) {
-    await redis.del(`sportCache:${sport.name.toLowerCase()}`);
-    await redis.del(`teamCache:${sport.name.toLowerCase()}`);
-    await redis.del(`playerCache:${sport.name.toLowerCase()}`);
-  }
 
   const item = {
     id: 2,
@@ -213,7 +194,7 @@ export async function getWTA() {
     });
     console.info(createdTeam.fullName, players.length);
   } catch (e) {
-    console.log('Tennis Error');
+    console.log('WTA Error');
     console.error(e);
   }
 
@@ -232,12 +213,6 @@ export default async function getATP() {
       name: 'Tennis',
     },
   });
-
-  if (sport) {
-    await redis.del(`sportCache:${sport.name.toLowerCase()}`);
-    await redis.del(`teamCache:${sport.name.toLowerCase()}`);
-    await redis.del(`playerCache:${sport.name.toLowerCase()}`);
-  }
 
   const item = {
     id: 1,
@@ -323,7 +298,7 @@ export default async function getATP() {
     });
     console.info(createdTeam.fullName, players.length);
   } catch (e) {
-    console.log('Tennis Error');
+    console.log('ATP Error');
     console.error(e);
   }
 

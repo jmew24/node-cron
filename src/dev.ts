@@ -25,7 +25,7 @@ const Dev = async () => {
   console.log(`[${new Date()}] Starting cron job scheduler...`);
   console.log('---------------------');
 
-  /**
+  /** */
   // Get all NHL players.
   console.log(`[${new Date()}] Running NHL Logging`);
   await getHockey();
@@ -137,7 +137,7 @@ const Dev = async () => {
   console.log(`[${new Date()}] Completed PGA Logging`);
   /**/
 
-  /** */
+  /**
   //Get all NASCAR players.
   console.log(`[${new Date()}] Running NASCAR Logging`);
   await getNASCAR();

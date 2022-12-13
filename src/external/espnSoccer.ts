@@ -2,7 +2,6 @@ import { Prisma } from '@prisma/client';
 
 import fetchRequest from '../lib/fetchRequest';
 import prisma from '../lib/prisma';
-import redis from '../lib/redis';
 
 export default async function getESPNSoccer(
   leagueId: string = '',
@@ -21,12 +20,6 @@ export default async function getESPNSoccer(
       name: 'Soccer',
     },
   });
-
-  if (sport) {
-    await redis.del(`sportCache:${sport.name.toLowerCase()}`);
-    await redis.del(`teamCache:${sport.name.toLowerCase()}`);
-    await redis.del(`playerCache:${sport.name.toLowerCase()}`);
-  }
 
   const teamResult = (await fetchRequest(
     `http://site.api.espn.com/apis/site/v2/sports/soccer/${leagueId}/teams`

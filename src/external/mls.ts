@@ -2,7 +2,6 @@ import { Prisma } from '@prisma/client';
 
 import fetchRequest from '../lib/fetchRequest';
 import prisma from '../lib/prisma';
-import redis from '../lib/redis';
 
 export default async function getMLS() {
   const sport = await prisma.sport.upsert({
@@ -16,12 +15,6 @@ export default async function getMLS() {
       name: 'Soccer',
     },
   });
-
-  if (sport) {
-    await redis.del(`sportCache:${sport.name.toLowerCase()}`);
-    await redis.del(`teamCache:${sport.name.toLowerCase()}`);
-    await redis.del(`playerCache:${sport.name.toLowerCase()}`);
-  }
 
   const teamResult = (await fetchRequest(
     `https://sportapi.mlssoccer.com/api/clubs/${new Date().getFullYear()}/98?culture=en-us`

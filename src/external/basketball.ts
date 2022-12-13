@@ -2,7 +2,6 @@ import { Prisma } from '@prisma/client';
 
 import fetchRequest from '../lib/fetchRequest';
 import prisma from '../lib/prisma';
-import redis from '../lib/redis';
 
 export const getWNBA = async () => {
   const sport = await prisma.sport.upsert({
@@ -16,12 +15,6 @@ export const getWNBA = async () => {
       name: 'Basketball',
     },
   });
-
-  if (sport) {
-    await redis.del(`sportCache:${sport.name.toLowerCase()}`);
-    await redis.del(`teamCache:${sport.name.toLowerCase()}`);
-    await redis.del(`playerCache:${sport.name.toLowerCase()}`);
-  }
 
   const teamResult = (await fetchRequest(
     //`https://www.wnba.com/wp-json/api/v1/teams.json`
@@ -128,7 +121,7 @@ export const getWNBA = async () => {
       });
       console.info(createdTeam.fullName, players.length);
     } catch (e) {
-      console.log('Basketball [WNBA] Error');
+      console.log('WNBA Error');
       console.error(e);
     }
   }
@@ -148,12 +141,6 @@ export default async function getBasketball() {
       name: 'Basketball',
     },
   });
-
-  if (sport) {
-    await redis.del(`sportCache:${sport.name.toLowerCase()}`);
-    await redis.del(`teamCache:${sport.name.toLowerCase()}`);
-    await redis.del(`playerCache:${sport.name.toLowerCase()}`);
-  }
 
   const teamResult = (await fetchRequest(
     `https://ca.global.nba.com/stats2/league/conferenceteamlist.json?locale=en`
@@ -243,7 +230,7 @@ export default async function getBasketball() {
         console.info(createdTeam.fullName, players.length);
       }
     } catch (e) {
-      console.log('Basketball Error');
+      console.log('NBA Error');
       console.error(e);
     }
   }

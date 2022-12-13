@@ -2,7 +2,6 @@ import { Prisma, Team } from '@prisma/client';
 
 import fetchRequest from '../lib/fetchRequest';
 import prisma from '../lib/prisma';
-import redis from '../lib/redis';
 
 export async function getIndyCar() {
   const sport = await prisma.sport.upsert({
@@ -16,12 +15,6 @@ export async function getIndyCar() {
       name: 'AutoRacing',
     },
   });
-
-  if (sport) {
-    await redis.del(`sportCache:${sport.name.toLowerCase()}`);
-    await redis.del(`teamCache:${sport.name.toLowerCase()}`);
-    await redis.del(`playerCache:${sport.name.toLowerCase()}`);
-  }
 
   const item = {
     id: 1,
@@ -229,7 +222,7 @@ export async function getNASCAR() {
     });
     console.info(createdTeam.fullName, players.length);
   } catch (e) {
-    console.log('Formula1 Error');
+    console.log('NASCAR Error');
     console.error(e);
   }
 
