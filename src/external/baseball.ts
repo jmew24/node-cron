@@ -2,6 +2,7 @@ import { Prisma } from '@prisma/client';
 
 import fetchRequest from '../lib/fetchRequest';
 import prisma from '../lib/prisma';
+import redis from '../lib/redis';
 
 export async function deleteBaseball() {
   const sport = await prisma.sport.upsert({
@@ -15,6 +16,12 @@ export async function deleteBaseball() {
       name: 'Baseball',
     },
   });
+
+  if (sport) {
+    await redis.del(`sportCache:${sport.name.toLowerCase()}`);
+    await redis.del(`teamCache:${sport.name.toLowerCase()}`);
+    await redis.del(`playerCache:${sport.name.toLowerCase()}`);
+  }
 
   const teamResult = (await fetchRequest(
     `https://statsapi.mlb.com/api/v1/teams/`
@@ -70,6 +77,12 @@ export default async function getBaseball() {
       name: 'Baseball',
     },
   });
+
+  if (sport) {
+    await redis.del(`sportCache:${sport.name.toLowerCase()}`);
+    await redis.del(`teamCache:${sport.name.toLowerCase()}`);
+    await redis.del(`playerCache:${sport.name.toLowerCase()}`);
+  }
 
   const teamResult = (await fetchRequest(
     `https://statsapi.mlb.com/api/v1/teams/`

@@ -2,6 +2,7 @@ import { Prisma } from '@prisma/client';
 
 import fetchRequest from '../lib/fetchRequest';
 import prisma from '../lib/prisma';
+import redis from '../lib/redis';
 
 export default async function getFootball() {
   const sport = await prisma.sport.upsert({
@@ -15,6 +16,12 @@ export default async function getFootball() {
       name: 'Football',
     },
   });
+
+  if (sport) {
+    await redis.del(`sportCache:${sport.name.toLowerCase()}`);
+    await redis.del(`teamCache:${sport.name.toLowerCase()}`);
+    await redis.del(`playerCache:${sport.name.toLowerCase()}`);
+  }
 
   const teamResult = (await fetchRequest(
     `https://site.api.espn.com/apis/site/v2/sports/football/nfl/teams`
