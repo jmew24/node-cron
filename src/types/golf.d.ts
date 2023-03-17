@@ -41,16 +41,23 @@ declare type PGAPlayerResult = {
 };
 
 declare type PGAResult = {
-  players: [
-    {
-      urlName: string;
-      name: string;
-      first_name: string;
-      last_name: string;
-      id: string;
-      country: string;
-      countryName: string;
-      active: boolean;
-    }
-  ];
+  pageProps: {
+    players: {
+      tourCode: string;
+      players: [
+        {
+          id: string;
+          age: string;
+          headshot: string;
+          displayName: string;
+          shortName: string;
+          firstName: string;
+          lastName: string;
+          country: string;
+          countryFlag: string;
+          isActive: boolean;
+        }
+      ];
+    };
+  };
 };

@@ -169,24 +169,27 @@ export default async function getPGA() {
     });
 
     const rosterResult = (await fetchRequest(
-      'https://www.pgatour.com/players/jcr:content/mainParsys/players_directory.players.json'
+      'https://www.pgatour.com/_next/data/pgatour-prod-1.5.8/en/players.json'
     )) as PGAResult;
+    const roster = rosterResult.pageProps.players.players;
 
     const players = [] as Prisma.PlayerCreateManyInput[];
-    for (const rosterItem of rosterResult.players) {
+    for (const rosterItem of roster) {
       try {
-        if (!rosterItem.first_name || !rosterItem.last_name) continue;
+        if (!rosterItem.firstName || !rosterItem.lastName) continue;
+
+        const urlName =
+          `${rosterItem.firstName}-${rosterItem.lastName}`.toLowerCase();
 
         players.push({
-          identifier:
-            `${rosterItem.id}-${item.sport}-${rosterItem.urlName}`.toLowerCase(),
-          firstName: rosterItem.first_name,
-          lastName: rosterItem.last_name,
-          fullName: rosterItem.name,
-          position: rosterItem.countryName.toString(),
-          number: rosterItem.active ? 1 : 0,
+          identifier: `${rosterItem.id}-${item.sport}-${urlName}`.toLowerCase(),
+          firstName: rosterItem.firstName,
+          lastName: rosterItem.lastName,
+          fullName: rosterItem.displayName,
+          position: rosterItem.country.toString(),
+          number: rosterItem.isActive ? 1 : 0,
           headshotUrl: `https://pga-tour-res.cloudinary.com/image/upload/c_fill,d_headshots_default.png,dpr_2.0,f_auto,g_face:center,h_64,q_auto,w_64/headshots_${rosterItem.id}.png`,
-          linkUrl: `https://www.pgatour.com/players/player.${rosterItem.id}.${rosterItem.urlName}.html`,
+          linkUrl: `https://www.pgatour.com/player/${rosterItem.id}/${urlName}`,
           source: source,
           teamId: createdTeam.id,
           sportId: sport.id,
